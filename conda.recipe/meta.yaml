@@ -18,6 +18,7 @@ requirements:
     - setuptools
   run:
     - python
+    - opensim
 
 about:
   home: https://github.com/pyomeca/pyosim
