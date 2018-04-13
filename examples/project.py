@@ -3,8 +3,11 @@ from pathlib import Path
 
 from pyosim.project import Project
 
-PROJECT_PATH = Path('./project_sample')
-# remove project if already exist
+DATA_PATH = Path('../tests/data')
+PROJECT_PATH = DATA_PATH / 'project_sample'
+CONF_TEMPLATE = DATA_PATH / '_conf.csv'
+
+# remove project if already exists
 if PROJECT_PATH.is_dir():
     shutil.rmtree(PROJECT_PATH)
 
@@ -15,6 +18,5 @@ project = Project(path=PROJECT_PATH)
 project.create_project()
 
 # add two participants from the template conf file
-TEMPLATE_PATH = Path('./data/') / '_conf.csv'
-shutil.copy(TEMPLATE_PATH, PROJECT_PATH)
+shutil.copy(CONF_TEMPLATE, PROJECT_PATH)
 project.update_participants()
