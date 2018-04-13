@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__all__ = ['fileio', 'project']
+__all__ = ['project', 'types']
 
 __author__ = "Romain Martinez & Pariterre"
 
