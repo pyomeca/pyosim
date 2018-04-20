@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__all__ = ['project', 'types']
+__all__ = ['project', 'obj']
 
 __author__ = "Romain Martinez & Pariterre"
 

@@ -1,1 +1,1 @@
-__all__ = ['conf']
+__all__ = ['conf', 'analogs', 'markers']

@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from pyomeca import fileio as pyoio
-from pyosim.types import Markers3dOsim, Analogs3dOsim
+from pyosim.obj.markers import Markers3dOsim
+from pyosim.obj.analogs import Analogs3dOsim
 
 # Path to data
 DATA_FOLDER = Path('..') / 'tests' / 'data'
@@ -12,17 +12,17 @@ STO_OUT = DATA_FOLDER / 'analogs.sto'
 # remove file if already exists
 if TRC_OUT.is_file():
     TRC_OUT.unlink()
+if STO_OUT.is_file():
+    STO_OUT.unlink()
 
 # read markers from c3d
-m = pyoio.read_c3d(MARKERS_ANALOGS_C3D, idx=[0, 1, 2, 3], kind='markers', prefix=':')
-# convert pyomeca's Markers3d to pyosim's Markers3dOsim
-mosim = Markers3dOsim(m)
+m = Markers3dOsim.from_c3d(MARKERS_ANALOGS_C3D, idx=[0, 1, 2, 3])
 # write a trc file
-mosim.to_trc(file_name=TRC_OUT)
+m.to_trc(file_name=TRC_OUT)
 
 # read analogs from c3d
-a = pyoio.read_c3d(MARKERS_ANALOGS_C3D, names=['1', '2', '3', '4', '5', '6'], kind='analogs', prefix=':')
+a = Analogs3dOsim.from_c3d(MARKERS_ANALOGS_C3D, names=['1', '2', '3', '4', '5', '6'])
 # convert pyomeca's Analogs3d to pyosim's Analogs3dOsim
-aosim = Analogs3dOsim(a)
+a = Analogs3dOsim(a)
 # write a sto file
-aosim.to_sto(file_name=STO_OUT)
+a.to_sto(file_name=STO_OUT)
