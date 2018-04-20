@@ -1,4 +1,0 @@
-participant,sex,laterality,group,mass,height,raw_data,process
-participant_1,men,right,1,80,180,/home/romain/Documents/codes/pyosim/test/data,1
-participant_2,women,left,2,70,160,/home/romain/Documents/codes/pyosim/test/data,1
-participant_3,men,right,1,80,170,/home/romain/Documents/codes/pyosim/test/data,0

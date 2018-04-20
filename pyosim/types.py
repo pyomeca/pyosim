@@ -101,6 +101,6 @@ class Analogs3dOsim(Analogs3d):
             a = self.get_frame(iframe)
             row = osim.RowVector(a.ravel().tolist())
             table.appendRow(time_vector[iframe], row)
-        #
+        
         adapter = osim.STOFileAdapter()
         adapter.write(table, str(file_name))
