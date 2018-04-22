@@ -1,6 +1,7 @@
 """
 Configuration class in pyosim
 """
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -23,6 +24,7 @@ class Conf:
         else:
             self.project_conf = pd.read_csv(self.conf_path)
             print('Configuration file loaded')
+        print('\n')
 
     def get_conf_column(self, col):
         """
@@ -51,8 +53,35 @@ class Conf:
             else:
                 d = (self.project_path / irow['participant'] / '_conf.json')
                 if d.is_file():
-                    self.project_conf.loc[index, 'conf_file'] = str(d.absolute())
+                    self.project_conf.loc[index, 'conf_file'] = str(d.resolve())
                     print(f'{irow["participant"]}: updated in project conf')
 
         # update conf file
-        self.project_conf.to_csv(self.conf_path)
+        print('\n')
+        self.project_conf.to_csv(self.conf_path, index=False)
+
+    @classmethod
+    def update_conf(cls, filename, d):
+        """
+        Update a json file with the dictionary `d`
+        Parameters
+        ----------
+        filename : str
+            Path to the json file
+        d : dict
+            dict to append
+        """
+        file = open(filename, 'r')
+        data = json.load(file)
+
+        data.update(d)
+        file = open(filename, 'w+')
+        json.dump(data, file)
+        file.close()
+
+    def add_conf_field(self, d):
+        for iparticipant, ivalue in d.items():
+            conf_file = self.project_conf[self.project_conf['participant'] == iparticipant]['conf_file'].values[0]
+            self.update_conf(conf_file, ivalue)
+            print(f"{iparticipant}'s conf file updated")
+        print('\n')

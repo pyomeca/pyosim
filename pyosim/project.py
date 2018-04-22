@@ -20,7 +20,7 @@ class Project:
         # check directory
         if not self.path.is_dir():
             self.path.mkdir()
-            print(f'{self.path} created')
+            print(f'{self.path} created\n')
         else:
             files = [ifile for ifile in self.path.rglob('*')]
             if files:
@@ -39,13 +39,13 @@ class Project:
 
         conf_cols = ['participant', 'sex', 'laterality', 'group', 'mass', 'height', 'conf_file', 'process']
 
-        pd.DataFrame(columns=conf_cols).to_csv(self.path / '_conf.csv')
+        pd.DataFrame(columns=conf_cols).to_csv(self.path / '_conf.csv', index=False)
 
         print(
             f'You should now:\n'
             f'\t1. Put one or several models into: `{self.path}/_models`\n'
             f'\t2. Put your generic XMLs into: `{self.path}/_templates`\n'
-            f'\t3. Fill the conf file: {self.path}/_conf.csv'
+            f'\t3. Fill the conf file: {self.path}/_conf.csv\n'
         )
 
     def update_participants(self):
@@ -80,7 +80,7 @@ class Project:
                 # create conf file
                 irow.to_json(self.path / irow['participant'] / '_conf.json')
 
-        print(f'{count} participants added')
+        print(f'{count} participants added\n')
 
 
 if __name__ == '__main__':
