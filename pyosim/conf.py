@@ -26,7 +26,7 @@ class Conf:
             print('Configuration file loaded')
         print('\n')
 
-    def get_conf_column(self, col):
+    def get_project_conf_column(self, col):
         """
         Get column(s) from the conf file
 
@@ -53,7 +53,9 @@ class Conf:
             else:
                 d = (self.project_path / irow['participant'] / '_conf.json')
                 if d.is_file():
-                    self.project_conf.loc[index, 'conf_file'] = str(d.resolve())
+                    conf_file = str(d.resolve())
+                    self.project_conf.loc[index, 'conf_file'] = conf_file
+                    self.update_conf(conf_file, {'conf_file': conf_file})
                     print(f'{irow["participant"]}: updated in project conf')
 
         # update conf file
@@ -69,7 +71,7 @@ class Conf:
         filename : str
             Path to the json file
         d : dict
-            dict to append
+            Dictionary to add to the configuration file
         """
         file = open(filename, 'r')
         data = json.load(file)
@@ -79,9 +81,74 @@ class Conf:
         json.dump(data, file)
         file.close()
 
+    @classmethod
+    def get_conf_file(cls, filename):
+        """
+        Get a configuration file
+
+        Parameters
+        ----------
+        filename : str
+            Path to the json file
+
+        Returns
+        -------
+        dict
+        """
+        with open(filename) as file:
+            data = json.load(file)
+        return data
+
     def add_conf_field(self, d):
+        """
+        Update configurations files from a dictionary. The keys should be the participant's pseudo
+
+        Parameters
+        ----------
+        d : dict
+            Dictionary to add to the configuration file
+
+        Examples
+        -------
+        # add some data path
+        d = {
+            'dapo': {'data': '/home/romain/Downloads/conf-files/DapO/mvc'},
+            'davo': {'data': '/home/romain/Downloads/conf-files/DavO/mvc'},
+            'fabd': {'data': '/home/romain/Downloads/conf-files/FabD/mvc'}
+        }
+        project.add_conf_field(d)
+        """
         for iparticipant, ivalue in d.items():
-            conf_file = self.project_conf[self.project_conf['participant'] == iparticipant]['conf_file'].values[0]
+            conf_file = self.get_conf_path(iparticipant)
             self.update_conf(conf_file, ivalue)
             print(f"{iparticipant}'s conf file updated")
-        print('\n')
+
+    def get_conf_path(self, participant):
+        """
+        Get participant's configuration file path
+
+        Parameters
+        ----------
+        participant : str
+            Participant
+        """
+        conf_path = self.project_conf[self.project_conf['participant'] == participant]['conf_file'].values[0]
+        return conf_path
+
+    def get_conf_field(self, participant, field):
+        """
+        Get participant's specific configuration field
+        Parameters
+        ----------
+        participant : str
+            Participant
+        field : str
+            Field to search in the configuration file
+
+        Returns
+        -------
+        str
+        """
+        conf_path = self.get_conf_path(participant)
+        conf_file = self.get_conf_file(conf_path)
+        return conf_file[field]
