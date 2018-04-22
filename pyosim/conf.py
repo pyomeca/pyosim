@@ -142,8 +142,8 @@ class Conf:
         ----------
         participant : str
             Participant
-        field : str
-            Field to search in the configuration file
+        field : str, list
+            Field(s) to search in the configuration file
 
         Returns
         -------
@@ -151,4 +151,10 @@ class Conf:
         """
         conf_path = self.get_conf_path(participant)
         conf_file = self.get_conf_file(conf_path)
-        return conf_file[field]
+
+        def get_from_dict(d, keys):
+            for k in keys:
+                d = d[k]
+            return d
+
+        return get_from_dict(conf_file, field)
