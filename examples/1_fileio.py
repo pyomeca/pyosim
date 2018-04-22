@@ -5,6 +5,7 @@ Example: Create configuration files and export data for each participants
 from pathlib import Path
 
 from pyosim.conf import Conf as pyoconf
+from pyomeca.gui import FieldsAssignment
 
 PROJECT_PATH = Path('../Misc/project_sample')
 
@@ -23,7 +24,17 @@ d = {
 project.add_conf_field(d)
 
 # assign channel fields to targets fields
-TARGETS = [
-    'deltant', 'deltmed', 'deltpost', 'biceps', 'triceps', 'uptrap',
-    'lotrap', 'serratus', 'ssp', 'isp', 'subs', 'pect', 'latissimus'
-]
+TARGETS = {
+    'emg': ['deltant', 'deltmed', 'deltpost', 'biceps', 'triceps', 'uptrap', 'lotrap',
+            'serratus', 'ssp', 'isp', 'subs', 'pect', 'latissimus'],
+    'analogs': ['Fx', 'Fy', 'Fz', 'Mx', 'My', 'Mz']
+}
+for ikind, itarget in TARGETS.items():
+    for iparticipant in ['dapo', 'davo', 'fabd']:
+        # emg channels
+        fields = FieldsAssignment(
+            directory=project.get_conf_field(iparticipant, field='data'),
+            targets=itarget,
+            kind=ikind
+        )
+        project.add_conf_field({iparticipant: fields.output})
