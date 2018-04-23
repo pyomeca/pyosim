@@ -28,10 +28,10 @@ shutil.copy(CONF_TEMPLATE, PROJECT_PATH)
 project.update_participants()
 
 # Create a Conf object
-project = Conf(project_path=PROJECT_PATH)
+conf = Conf(project_path=PROJECT_PATH)
 
 # Check if all participants have a configuration file and update it in the project's configuration file
-project.check_confs()
+conf.check_confs()
 
 # add some data path in participants' conf file
 d = {
@@ -39,25 +39,31 @@ d = {
         'emg': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials',
                          '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/MODEL2',
                          '/media/romain/E/Projet_MVC/data/DataLandryD4/DapO']},
-        'analogs': {'data': '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials'},
+        'analogs': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials']},
         'markers': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials',
                              '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/MODEL2']}
     }
 }
 
-project.add_conf_field(d)
+conf.add_conf_field(d)
 
 # assign channel fields to targets fields
 TARGETS = {
     'emg': ['deltant', 'deltmed', 'deltpost', 'biceps', 'triceps', 'uptrap', 'lotrap',
             'serratus', 'ssp', 'isp', 'subs', 'pect', 'latissimus'],
-    'analogs': ['Fx', 'Fy', 'Fz', 'Mx', 'My', 'Mz']
+    'analogs': ['Fx', 'Fy', 'Fz', 'Mx', 'My', 'Mz'],
+    'markers': ['ASISl', 'ASISr', 'PSISl', 'PSISr', 'STER', 'STERl', 'STERr', 'T1', 'T10', 'XIPH', 'CLAVm', 'CLAVl',
+                'CLAV_ant', 'CLAV_post', 'CLAV_SC', 'ACRO_tip', 'SCAP_AA', 'SCAPl', 'SCAPm', 'SCAP_CP', 'SCAP_RS',
+                'SCAP_SA', 'SCAP_IA', 'CLAV_AC', 'DELT', 'ARMl', 'ARMm', 'ARMp_up', 'ARMp_do', 'EPICl', 'EPICm',
+                'LARMm', 'LARMl', 'LARM_elb', 'LARM_ant', 'STYLr', 'STYLr_up', 'STYLu', 'WRIST', 'INDEX', 'LASTC',
+                'MEDH', 'LATH', 'boite_gauche_ext', 'boite_gauche_int', 'boite_droite_int', 'boite_droite_ext',
+                'boite_avant_gauche', 'boite_avant_droit', 'boite_arriere_droit', 'boite_arriere_gauche']
 }
 for ikind, itarget in TARGETS.items():
     for iparticipant in ['dapo']:
         fields = FieldsAssignment(
-            directory=project.get_conf_field(iparticipant, field=[ikind, 'data']),
+            directory=conf.get_conf_field(iparticipant, field=[ikind, 'data']),
             targets=itarget,
             kind=ikind
         )
-        project.add_conf_field({iparticipant: fields.output})
+        conf.add_conf_field({iparticipant: fields.output})
