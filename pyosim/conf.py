@@ -71,14 +71,38 @@ class Conf:
         filename : str
             Path to the json file
         d : dict
-            Dictionary to add to the configuration file
+            Dictionary to add in configuration file
         """
+
+        def dict_merge(dct, merge_dct):
+            """Recursive dict merge. Inspired by :meth:`dict.update()`, instead of
+            updating only top-level keys, dict_merge recurses down into dicts nested
+            to an arbitrary depth, updating keys. The `merge_dct` is merged into
+            `dct`.
+
+
+            Parameters
+            ----------
+            dct : dict
+                dict onto which the merge is executed
+            merge_dct : dict
+                dct merged into dct
+            """
+            from collections import Mapping
+            for k, v in merge_dct.items():
+                if (k in dct and isinstance(dct[k], dict)
+                        and isinstance(merge_dct[k], Mapping)):
+                    dict_merge(dct[k], merge_dct[k])
+                else:
+                    dct[k] = merge_dct[k]
+            return dct
+
         file = open(filename, 'r')
         data = json.load(file)
 
-        data.update(d)
+        # data.update(d)
         file = open(filename, 'w+')
-        json.dump(data, file)
+        json.dump(dict_merge(data, d), file)
         file.close()
 
     @classmethod
@@ -106,7 +130,7 @@ class Conf:
         Parameters
         ----------
         d : dict
-            Dictionary to add to the configuration file
+            Dictionary to add in configuration file
 
         Examples
         -------
