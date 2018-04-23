@@ -4,9 +4,10 @@ Example: create a project.
 
 import shutil
 from pathlib import Path
-from pyosim.project import Project
-from pyosim.conf import Conf
+
 from pyomeca.gui import FieldsAssignment
+from pyosim.conf import Conf
+from pyosim.project import Project
 
 # path
 PROJECT_PATH = Path('../Misc/project_sample')
@@ -34,13 +35,16 @@ project.check_confs()
 
 # add some data path in participants' conf file
 d = {
-    'dapo': {'emg': {'data': '/home/romain/Downloads/conf-files/DapO/mvc'},
-             'analogs': {'data': '/home/romain/Downloads/conf-files/DapO/mvc'}},
-    'davo': {'emg': {'data': '/home/romain/Downloads/conf-files/DavO/mvc'},
-             'analogs': {'data': '/home/romain/Downloads/conf-files/DavO/mvc'}},
-    'fabd': {'emg': {'data': '/home/romain/Downloads/conf-files/FabD/mvc'},
-             'analogs': {'data': '/home/romain/Downloads/conf-files/FabD/mvc'}},
+    'dapo': {
+        'emg': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials',
+                         '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/MODEL2',
+                         '/media/romain/E/Projet_MVC/data/DataLandryD4/DapO']},
+        'analogs': {'data': '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials'},
+        'markers': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials',
+                             '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/MODEL2']}
+    }
 }
+
 project.add_conf_field(d)
 
 # assign channel fields to targets fields
@@ -50,7 +54,7 @@ TARGETS = {
     'analogs': ['Fx', 'Fy', 'Fz', 'Mx', 'My', 'Mz']
 }
 for ikind, itarget in TARGETS.items():
-    for iparticipant in ['dapo', 'davo', 'fabd']:
+    for iparticipant in ['dapo']:
         fields = FieldsAssignment(
             directory=project.get_conf_field(iparticipant, field=[ikind, 'data']),
             targets=itarget,
