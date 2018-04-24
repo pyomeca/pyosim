@@ -26,6 +26,17 @@ class Conf:
             print('Configuration file loaded')
         print('\n')
 
+    def get_participants_to_process(self):
+        """
+        Get a list of participants with the flag 'process' to one or true in project configuration file
+        Returns
+        -------
+        list
+        """
+        to_process = self.project_conf['process'] == True
+        return self.project_conf['participant'].loc[to_process].tolist()
+
+
     def get_project_conf_column(self, col):
         """
         Get column(s) from the conf file

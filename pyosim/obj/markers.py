@@ -49,7 +49,7 @@ class Markers3dOsim(Markers3d):
         time_vector = np.arange(start=0, stop=1 / self.get_rate * self.shape[2], step=1 / self.get_rate)
 
         for iframe in range(self.shape[-1]):
-            a = self.get_frame(iframe)[:-1, ...]
+            a = np.round(self.get_frame(iframe)[:-1, ...], decimals=4)
             row = osim.RowVectorOfVec3(
                 [osim.Vec3(a[0, i], a[1, i], a[2, i]) for i in range(a.shape[-1])]
             )
