@@ -1,7 +1,6 @@
 """
 Example: create a project.
 """
-
 import shutil
 from pathlib import Path
 
@@ -34,17 +33,17 @@ conf = Conf(project_path=PROJECT_PATH)
 conf.check_confs()
 
 # add some data path in participants' conf file
-d = {
-    'dapo': {
-        'emg': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials',
-                         '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/MODEL2',
-                         '/media/romain/E/Projet_MVC/data/DataLandryD4/DapO']},
-        'analogs': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials']},
-        'markers': {'data': ['/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/trials',
-                             '/media/romain/F/Data/Shoulder/RAW/IRSST_DapOd/MODEL2']}
-    }
-}
+participants = conf.get_participants_to_process()
+d = {}
+for iparticipant in participants:
+    pseudo_in_path = iparticipant[0].upper() + iparticipant[1:-1] + iparticipant[-1].upper()
+    trials = f'/media/romain/F/Data/Shoulder/RAW/IRSST_{pseudo_in_path}d/trials'
+    score = f'/media/romain/F/Data/Shoulder/RAW/IRSST_{pseudo_in_path}d/MODEL2'
+    mvc = f'/media/romain/E/Projet_MVC/data/C3D_original_files/irsst_hf/{pseudo_in_path}'
 
+    d.update({iparticipant: {'emg': {'data': [trials, mvc]},
+                             'analogs': {'data': [trials]},
+                             'markers': {'data': [trials, score]}}})
 conf.add_conf_field(d)
 
 # assign channel fields to targets fields
@@ -59,8 +58,9 @@ TARGETS = {
                 'MEDH', 'LATH', 'boite_gauche_ext', 'boite_gauche_int', 'boite_droite_int', 'boite_droite_ext',
                 'boite_avant_gauche', 'boite_avant_droit', 'boite_arriere_droit', 'boite_arriere_gauche']
 }
+
 for ikind, itarget in TARGETS.items():
-    for iparticipant in ['dapo']:
+    for iparticipant in participants:
         fields = FieldsAssignment(
             directory=conf.get_conf_field(iparticipant, field=[ikind, 'data']),
             targets=itarget,
