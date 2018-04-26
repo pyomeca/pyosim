@@ -14,12 +14,12 @@ PROJECT_PATH = Path('../Misc/project_sample')
 
 conf = Conf(project_path=PROJECT_PATH)
 
+markers_labels = conf.get_conf_field(participant='dapo', field=['markers', 'targets'])
+
 participants = conf.get_participants_to_process()
+participants = participants[13:]
 
-participants = participants[55:]
-'/media/romain/F/Data/Shoulder/RAW/IRSST_AmiAd/MODEL2/IRSST_AmiAd6.c3d'
 for iparticipant in participants:
-
     print(f'\nparticipant: {iparticipant}')
     directories = conf.get_conf_field(participant=iparticipant, field=['markers', 'data'])
     assigned = conf.get_conf_field(participant=iparticipant, field=['markers', 'assigned'])
@@ -28,38 +28,40 @@ for iparticipant in participants:
         print(f'\n\tdirectory: {idir}')
 
         for itrial in Path(idir).glob('*.c3d'):
-            print(f'\t\ttrial: {itrial.parts[-1]}')
             # try participant's channel assignment
             for iassign in assigned:
+
                 # delete some markers if particular trials (box markers during score)
                 if Path(idir).parts[-1] == 'MODEL2':
                     iassign = iassign[:-8]
+                    labels = markers_labels[:-8]
+                else:
+                    labels = markers_labels
+
+
+                nan_idx = [i for i, v in enumerate(iassign) if not v]
+                if nan_idx:
+                    iassign_without_nans = [i for i in iassign if i]
+                else:
+                    iassign_without_nans = iassign
+
                 try:
-                    # get index where assignment are empty
-                    nan_idx = [i for i, v in enumerate(iassign) if not v]
-
+                    markers = Markers3dOsim.from_c3d(itrial, names=iassign_without_nans, prefix=':')
                     if nan_idx:
-                        iassign_without_nans = [i for i in iassign if i]
-                        markers = Markers3dOsim.from_c3d(itrial, names=iassign_without_nans, prefix=':')
-
-                        # append nan dimensions
+                        # if there is any empty assignment, fill the dimension with nan
                         for i in nan_idx:
                             markers = np.insert(markers, i, np.nan, axis=1)
-                        # check if nan dimension are correctly inserted
-                        n = np.isnan(markers).sum(axis=2).ravel()
-                        if not np.array_equal(n.argsort()[-len(nan_idx):], nan_idx):
-                            raise ValueError('NaN dimensions misplaced')
+                        print(f'\t{itrial.parts[-1]} (NaNs: {nan_idx})')
                     else:
-                        iassign_without_nans = iassign
-                        markers = Markers3dOsim.from_c3d(itrial, names=iassign_without_nans, prefix=':')
+                        print(f'\t{itrial.parts[-1]}')
 
                     # check if dimensions are ok
                     if not markers.shape[1] == len(iassign):
-                        raise ValueError('Wrong dimension')
-
+                        raise ValueError('Wrong dimensions')
                     break
                 except IndexError:
                     markers = []
 
+            markers.get_labels = labels
             trc_filename = PROJECT_PATH / iparticipant / '0_markers' / itrial.parts[-1].replace('c3d', 'trc')
-            markers.to_trc(file_name=trc_filename)
+            markers.to_trc(filename=trc_filename)
