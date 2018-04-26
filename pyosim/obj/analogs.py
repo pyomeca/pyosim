@@ -17,18 +17,18 @@ class Analogs3dOsim(Analogs3d):
         if obj is None or not isinstance(obj, Analogs3dOsim):
             return
 
-    def to_sto(self, file_name):
+    def to_sto(self, filename):
         """
         Write a sto file from a Analogs3dOsim
         Parameters
         ----------
-        file_name : string
+        filename : string
             path of the file to write
         """
-        file_name = Path(file_name)
+        filename = Path(filename)
         # Make sure the directory exists, otherwise create it
-        if not file_name.parents[0].is_dir():
-            file_name.parents[0].mkdir()
+        if not filename.parents[0].is_dir():
+            filename.parents[0].mkdir()
 
         table = osim.TimeSeriesTable()
 
@@ -43,4 +43,4 @@ class Analogs3dOsim(Analogs3d):
             table.appendRow(time_vector[iframe], row)
 
         adapter = osim.STOFileAdapter()
-        adapter.write(table, str(file_name))
+        adapter.write(table, str(filename))
