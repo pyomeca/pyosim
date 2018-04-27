@@ -38,7 +38,6 @@ for iparticipant in participants:
                 else:
                     labels = markers_labels
 
-
                 nan_idx = [i for i, v in enumerate(iassign) if not v]
                 if nan_idx:
                     iassign_without_nans = [i for i in iassign if i]
