@@ -24,7 +24,6 @@ params = {
 }
 
 participants = conf.get_participants_to_process()
-# participants = ['dapo']
 
 for iparticipant in participants:
     print(f'\nparticipant: {iparticipant}')
@@ -64,59 +63,56 @@ for iparticipant in participants:
         forces = forces[..., ~nan_rows]
         # processing (offset during the first second, calibration, )
         forces = forces \
-            .center(mu=np.nanmean(forces[..., :int(forces.get_rate)], axis=-1), axis=-1) \
+            .center(mu=np.nanmedian(forces[..., 10:int(forces.get_rate)], axis=-1), axis=-1) \
             .squeeze().T.dot(calibration_matrix).T[np.newaxis] \
             .low_pass(freq=forces.get_rate, order=params['order'], cutoff=params['low_pass_cutoff']) \
             .dot(-1)
 
         norm = Analogs3dOsim(forces.norm().reshape(1, 1, -1))
         idx = norm[0, 0, :].detect_onset(
-            threshold=np.nanmean(norm[..., 10:int(forces.get_rate)]) * 10,
+            threshold=5,  # 5 Newtons
             above=int(forces.get_rate) / 2,
-            below=3,
-            threshold2=np.nanmean(norm[..., :int(forces.get_rate)]) * 4,
-            above2=1
+            below=1000,
         )
+
+        # Special cases
+        if itrial.parts[-1] == 'MarSF12H4_1.c3d':
+            idx[0][1] = 11983
+        if itrial.parts[-1] == 'MarSF6H4_1.c3d':
+            idx[0][1] = 10672
+        if itrial.parts[-1] == 'GatBH18H4_2.c3d':
+            idx[0][1] = 17122
+        if itrial.parts[-1] == 'GatBH18H4_2.c3d':
+            idx[0][1] = 17122
+        if itrial.parts[-1] == 'GatBH18H4_3.c3d':
+            idx[0][0] = 5271
+
+        if idx.shape[0] > 1:
+            raise ValueError('more than one onset')
+
+        ten_percents = int(forces.shape[-1] * 0.1)
+        if idx[0][0] < ten_percents:
+            raise ValueError(f'onset is less than 10% of the trial ({idx[0][0]/forces.shape[-1]*100:2f}%)')
+
+        ninety_percents = int(forces.shape[-1] * 0.97)
+        if idx[0][1] > ninety_percents:
+            raise ValueError(f'onset is less than 90% of the trial ({idx[0][1]/forces.shape[-1]*100:.2f}%)')
 
         _, ax = plt.subplots(nrows=1, ncols=1)
         norm.plot(ax=ax)
-        if idx.shape[0] > 1:
-            raise ValueError('more than one onset')
+
         for (inf, sup) in idx:
             ax.axvline(x=inf, color='g', lw=2, ls='--')
             ax.axvline(x=sup, color='r', lw=2, ls='--')
         plt.show()
-        print('')
 
-        # --- Get force onset-offset
+        forces.get_labels = params['forces_labels']
+        sto_filename = PROJECT_PATH / iparticipant / '0_forces' / itrial.parts[-1].replace('c3d', 'sto')
+        forces.to_sto(filename=sto_filename)
 
-    # forces.get_labels = params['forces_labels']
-    # sto_filename = PROJECT_PATH / iparticipant / '0_forces' / itrial.parts[-1].replace('c3d', 'sto')
-    # forces.to_sto(filename=sto_filename)
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-freq = 100
-t = np.arange(0, 1, .01)
-w = 2 * np.pi * 1
-y = np.sin(w * t) + 0.1 * np.sin(10 * w * t)
-
-_, ax = plt.subplots(nrows=2, ncols=1, sharex=True)
-
-ax[0].plot(y, label='courbe 1')
-ax[0].plot(y*0.5, label='courbe 2')
-ax[0].legend()
-ax[0].set_title('Titre 1')
-
-ax[1].plot(y * -2, label='courbe 3')
-ax[1].plot(y * 4, label='courbe 4')
-ax[1].legend()
-ax[1].set_title('Titre 2')
-
-plt.xlabel('Axe X')
-plt.ylabel('Axe Y')
-
-plt.legend()
-plt.tight_layout()
-plt.show()
+        # add onset & offset in configuration
+        onset = idx[0][0] / forces.get_rate
+        offset = idx[0][1] / forces.get_rate
+        conf.add_conf_field({
+            iparticipant: {'onset': {itrial.parts[-1][:-4]: [onset, offset]}}
+        })
