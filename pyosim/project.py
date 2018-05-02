@@ -1,10 +1,21 @@
+"""
+Project class in pyosim
+"""
+
 from pathlib import Path
 
 import pandas as pd
 
 
 class Project:
-    """Project manager."""
+    """
+    Project manager
+
+    Parameters
+    ----------
+    path : str
+        Path to the project
+    """
 
     def __init__(self, path):
         self.path = Path(path)
@@ -81,12 +92,3 @@ class Project:
                 irow.to_json(self.path / irow['participant'] / '_conf.json')
 
         print(f'{count} participants added\n')
-
-
-if __name__ == '__main__':
-    PROJECT_PATH = Path('/home/romain/Downloads/opensim/project')
-    project = Project(PROJECT_PATH)
-
-    if not PROJECT_PATH.is_dir():
-        project.create_project()
-    project.update_participants()

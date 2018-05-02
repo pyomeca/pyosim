@@ -1,7 +1,33 @@
+"""
+Scale class in pyosim
+"""
+
 import opensim as osim
 
 
 class Scale:
+    """
+    Scale tool in pyosim
+
+    Parameters
+    ----------
+    model_input : str
+        Path to the generic model
+    model_output : str
+        Output path of the scaled model
+    xml_input : str
+        Path to the generic scaling xml
+    xml_output : str
+        Output path of the scaling xml
+    static_path : str
+        Path to the static trial (must be .trc)
+    mass : double
+        Participant's mass (kg)
+    height : double
+        Participant's height (mm)
+    age : int
+        Participant's age (year)
+    """
 
     def __init__(self, model_input, model_output, xml_input, xml_output, static_path, mass=-1, height=-1, age=-1):
         self.model = osim.Model(model_input)

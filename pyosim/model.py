@@ -1,3 +1,6 @@
+"""
+Model class in pyosim
+"""
 import opensim as osim
 
 

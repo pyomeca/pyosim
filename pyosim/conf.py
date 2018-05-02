@@ -8,8 +8,18 @@ import pandas as pd
 
 
 class Conf:
+    """
+    Configuration class in pyosim
+
+    Parameters
+    ----------
+    project_path : str
+        Path to the project
+    conf_file : str
+        Filename of the configuration file
+    """
+
     def __init__(self, project_path, conf_file='_conf.csv'):
-        """Configuration class in pyosim"""
         # load project dir
         self.project_path = Path(project_path)
         if not self.project_path.is_dir():

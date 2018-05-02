@@ -12,6 +12,8 @@ PROJECT_PATH = Path('../Misc/project_sample')
 MODELS_PATH = PROJECT_PATH / '_models'
 TEMPLATES_PATH = PROJECT_PATH / '_templates'
 
+model_names = ['wu', 'das']
+
 conf = Conf(project_path=PROJECT_PATH)
 
 participants = conf.get_participants_to_process()
@@ -23,7 +25,7 @@ for iparticipant in participants:
     mass = conf.get_conf_field(iparticipant, ['mass'])
     height = conf.get_conf_field(iparticipant, ['height'])
 
-    for imodel in ['wu', 'das']:
+    for imodel in model_names:
         model_path = f'{MODELS_PATH / imodel}.osim'
 
         scaling = Scale(
