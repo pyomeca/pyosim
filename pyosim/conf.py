@@ -36,7 +36,6 @@ class Conf:
         to_process = self.project_conf['process'] == True
         return self.project_conf['participant'].loc[to_process].tolist()
 
-
     def get_project_conf_column(self, col):
         """
         Get column(s) from the conf file
