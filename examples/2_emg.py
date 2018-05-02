@@ -7,8 +7,8 @@ from pathlib import Path
 import numpy as np
 
 from pyomeca.obj.analogs import MVC
-from pyosim.conf import Conf
-from pyosim.obj.analogs import Analogs3dOsim
+from pyosim import Conf
+from pyosim.obj import Analogs3dOsim
 
 # path
 PROJECT_PATH = Path('../Misc/project_sample')

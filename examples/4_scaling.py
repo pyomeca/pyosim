@@ -4,8 +4,8 @@ Example: export models
 
 from pathlib import Path
 
-from pyosim.conf import Conf
-from pyosim.scale import Scale
+from pyosim import Conf
+from pyosim import Scale
 
 # path
 PROJECT_PATH = Path('../Misc/project_sample')

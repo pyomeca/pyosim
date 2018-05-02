@@ -6,8 +6,8 @@ from pathlib import Path
 
 import numpy as np
 
-from pyosim.conf import Conf
-from pyosim.obj.markers import Markers3dOsim
+from pyosim import Conf
+from pyosim.obj import Markers3dOsim
 
 # path
 PROJECT_PATH = Path('../Misc/project_sample')

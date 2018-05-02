@@ -5,8 +5,8 @@ import shutil
 from pathlib import Path
 
 from pyomeca.gui import FieldsAssignment
-from pyosim.conf import Conf
-from pyosim.project import Project
+from pyosim import Conf
+from pyosim import Project
 
 # path
 PROJECT_PATH = Path('../Misc/project_sample')

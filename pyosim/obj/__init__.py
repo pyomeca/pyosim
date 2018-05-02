@@ -1,1 +1,2 @@
-__all__ = ['conf', 'analogs', 'markers']
+from .analogs import *
+from .markers import *

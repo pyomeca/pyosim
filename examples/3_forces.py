@@ -7,8 +7,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from pyosim.conf import Conf
-from pyosim.obj.analogs import Analogs3dOsim
+from pyosim import Conf
+from pyosim.obj import Analogs3dOsim
 
 # path
 PROJECT_PATH = Path('../Misc/project_sample')

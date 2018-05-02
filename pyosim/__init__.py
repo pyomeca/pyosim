@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-__all__ = ['project', 'obj']
+from .scale import *
+from .project import *
+from .model import *
+from .conf import *
 
-__author__ = "Romain Martinez & Pariterre"
+__author__ = "Romain Martinez"
 
 __version__ = '0.1.0'
