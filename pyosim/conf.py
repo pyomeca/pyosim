@@ -13,7 +13,7 @@ class Conf:
 
     Parameters
     ----------
-    project_path : str
+    project_path : str, Path
         Path to the project
     conf_file : str
         Filename of the configuration file

@@ -46,9 +46,9 @@ for iparticipant in participants:
                     # if there is any empty assignment, fill the dimension with nan
                     for i in nan_idx:
                         forces = np.insert(forces, i, np.nan, axis=1)
-                    print(f'\t{itrial.parts[-1]} (NaNs: {nan_idx})')
+                    print(f'\t{itrial.stem} (NaNs: {nan_idx})')
                 else:
-                    print(f'\t{itrial.parts[-1]}')
+                    print(f'\t{itrial.stem}')
 
                 # check if dimensions are ok
                 if not forces.shape[1] == len(iassign):
@@ -76,15 +76,15 @@ for iparticipant in participants:
         )
 
         # Special cases
-        if itrial.parts[-1] == 'MarSF12H4_1.c3d':
+        if itrial.stem == 'MarSF12H4_1.c3d':
             idx[0][1] = 11983
-        if itrial.parts[-1] == 'MarSF6H4_1.c3d':
+        if itrial.stem == 'MarSF6H4_1.c3d':
             idx[0][1] = 10672
-        if itrial.parts[-1] == 'GatBH18H4_2.c3d':
+        if itrial.stem == 'GatBH18H4_2.c3d':
             idx[0][1] = 17122
-        if itrial.parts[-1] == 'GatBH18H4_2.c3d':
+        if itrial.stem == 'GatBH18H4_2.c3d':
             idx[0][1] = 17122
-        if itrial.parts[-1] == 'GatBH18H4_3.c3d':
+        if itrial.stem == 'GatBH18H4_3.c3d':
             idx[0][0] = 5271
 
         if idx.shape[0] > 1:
@@ -107,12 +107,13 @@ for iparticipant in participants:
         plt.show()
 
         forces.get_labels = params['forces_labels']
-        sto_filename = PROJECT_PATH / iparticipant / '0_forces' / itrial.parts[-1].replace('c3d', 'sto')
+        sto_filename = f"{PROJECT_PATH / iparticipant / '0_forces' / itrial.stem}.sto"
+
         forces.to_sto(filename=sto_filename)
 
         # add onset & offset in configuration
         onset = idx[0][0] / forces.get_rate
         offset = idx[0][1] / forces.get_rate
         conf.add_conf_field({
-            iparticipant: {'onset': {itrial.parts[-1][:-4]: [onset, offset]}}
+            iparticipant: {'onset': {itrial.stem: [onset, offset]}}
         })

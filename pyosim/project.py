@@ -13,7 +13,7 @@ class Project:
 
     Parameters
     ----------
-    path : str
+    path : str, Path
         Path to the project
     """
 

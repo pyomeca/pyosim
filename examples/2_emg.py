@@ -67,9 +67,9 @@ for iparticipant in participants:
                     # if there is any empty assignment, fill the dimension with nan
                     for i in nan_idx:
                         emg = np.insert(emg, i, np.nan, axis=1)
-                    print(f'\t{itrial.parts[-1]} (NaNs: {nan_idx})')
+                    print(f'\t{itrial.stem} (NaNs: {nan_idx})')
                 else:
-                    print(f'\t{itrial.parts[-1]}')
+                    print(f'\t{itrial.stem}')
 
                 # check if dimensions are ok
                 if not emg.shape[1] == len(iassign):
@@ -87,5 +87,5 @@ for iparticipant in participants:
             .normalization(ref=mva, scale=1)
 
         emg.get_labels = params['emg_labels']
-        sto_filename = PROJECT_PATH / iparticipant / '0_emg' / itrial.parts[-1].replace('c3d', 'sto')
+        sto_filename = f"{PROJECT_PATH / iparticipant / '0_emg' / itrial.stem}.sto"
         emg.to_sto(filename=sto_filename)
