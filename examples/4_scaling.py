@@ -35,7 +35,8 @@ for iparticipant in participants:
             xml_output=f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_scaled.xml",
             static_path=static_path,
             mass=mass,
-            height=height * 10
+            height=height * 10,
+            remove_unused=False
         )
 
         # TODO: get total squared error + marker error + max

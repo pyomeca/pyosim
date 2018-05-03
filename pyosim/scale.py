@@ -27,9 +27,12 @@ class Scale:
         Participant's height (mm)
     age : int
         Participant's age (year)
+    remove_unused : bool
+        If unused markers have to be removed (default = True in OpenSim)
     """
 
-    def __init__(self, model_input, model_output, xml_input, xml_output, static_path, mass=-1, height=-1, age=-1):
+    def __init__(self, model_input, model_output, xml_input, xml_output, static_path, mass=-1, height=-1, age=-1,
+                 remove_unused=True):
         self.model = osim.Model(model_input)
         self.model_output = model_output
         self.static_path = static_path
@@ -37,7 +40,7 @@ class Scale:
 
         self.time_range = self.time_range_from_static()
 
-        # load generic scale xml
+        # initialize scale tool from setup file
         self.scale_tool = osim.ScaleTool(xml_input)
         self.set_anthropometry(mass, height, age)
         # Tell scale tool to use the loaded model
@@ -45,6 +48,9 @@ class Scale:
 
         self.run_model_scaler()
         self.run_marker_placer()
+
+        if not remove_unused:
+            self.add_unused_markers()
 
     def time_range_from_static(self):
         static = osim.MarkerData(self.static_path)
@@ -113,3 +119,22 @@ class Scale:
 
         # print scale config to xml
         self.scale_tool.printToXML(self.xml_output)
+
+    def add_unused_markers(self):
+        with_unused = osim.Model(self.model_output)
+        without_unused = osim.Model(self.model_output.replace('.osim', '_markers.osim'))
+
+        with_unused_markerset = with_unused.getMarkerSet()
+        without_unused_markerset = without_unused.getMarkerSet()
+
+        with_unused_l = [with_unused_markerset.get(imarker).getName() for imarker in range(with_unused.getNumMarkers())]
+        without_unused_l = [without_unused_markerset.get(imarker).getName() for imarker in
+                            range(without_unused.getNumMarkers())]
+
+        differences = set(with_unused_l).difference(without_unused_l)
+
+        for idiff in differences:
+            without_unused.addMarker(
+                with_unused_markerset.get(idiff)
+            )
+        without_unused.printToXML(self.model_output.replace('.osim', '_markers_test.osim'))
