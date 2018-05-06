@@ -4,6 +4,7 @@ from .project import *
 from .model import *
 from .conf import *
 from .ik import *
+from .id import *
 
 __author__ = "Romain Martinez"
 
