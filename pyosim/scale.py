@@ -35,6 +35,7 @@ class Scale:
                  remove_unused=True):
         self.model = osim.Model(model_input)
         self.model_output = model_output
+        self.model__with_markers_output = model_output.replace('.osim', '_markers.osim')
         self.static_path = static_path
         self.xml_output = xml_output
 
@@ -110,7 +111,7 @@ class Scale:
         marker_placer.setStaticPoseFileName(self.static_path)
 
         # Name of model file (.osim) to write when done scaling
-        marker_placer.setOutputModelFileName(self.model_output.replace('.osim', '_markers.osim'))
+        marker_placer.setOutputModelFileName(self.model__with_markers_output)
 
         # Maximum amount of movement allowed in marker data when averaging
         marker_placer.setMaxMarkerMovement(-1)
@@ -122,7 +123,7 @@ class Scale:
 
     def add_unused_markers(self):
         with_unused = osim.Model(self.model_output)
-        without_unused = osim.Model(self.model_output.replace('.osim', '_markers.osim'))
+        without_unused = osim.Model(self.model__with_markers_output)
 
         with_unused_markerset = with_unused.getMarkerSet()
         without_unused_markerset = without_unused.getMarkerSet()
@@ -134,7 +135,7 @@ class Scale:
         differences = set(with_unused_l).difference(without_unused_l)
 
         for idiff in differences:
-            without_unused.addMarker(
-                with_unused_markerset.get(idiff)
-            )
-        without_unused.printToXML(self.model_output.replace('.osim', '_markers_test.osim'))
+            m = with_unused_markerset.get(idiff).clone()
+            without_unused.addMarker(m)
+
+        without_unused.printToXML(self.model__with_markers_output)
