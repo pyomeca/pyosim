@@ -12,7 +12,7 @@ PROJECT_PATH = Path('../Misc/project_sample')
 MODELS_PATH = PROJECT_PATH / '_models'
 TEMPLATES_PATH = PROJECT_PATH / '_templates'
 
-model_names = ['wu', 'das']
+model_names = ['das', 'wu']
 
 conf = Conf(project_path=PROJECT_PATH)
 
@@ -27,7 +27,6 @@ for iparticipant in participants:
 
     for imodel in model_names:
         model_path = f'{MODELS_PATH / imodel}.osim'
-
         scaling = Scale(
             model_input=model_path,
             model_output=f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled.osim",
@@ -38,5 +37,4 @@ for iparticipant in participants:
             height=height * 10,
             remove_unused=False
         )
-
         # TODO: get total squared error + marker error + max

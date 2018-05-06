@@ -3,6 +3,7 @@ from .scale import *
 from .project import *
 from .model import *
 from .conf import *
+from .ik import *
 
 __author__ = "Romain Martinez"
 
