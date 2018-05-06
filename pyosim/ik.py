@@ -13,14 +13,14 @@ class IK:
     Parameters
     ----------
     model_input : str
-        Path to the generic model
+        Path to the osim model
     xml_input : str
-        Path to the generic scaling xml
+        Path to the generic ik xml
     xml_output : str
-        Output path of the scaling xml
-    trc : str, Path, list
+        Output path of the ik xml
+    trc_files : str, list
         Path or list of path to the marker files (`.trc`)
-    mot_output : Path, str
+    mot_output : str
         Output directory
     onsets : dict, optional
         Dictionary which contains the starting and ending point in second as values and trial name as keys
@@ -44,28 +44,29 @@ class IK:
     >>>     model_input=f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled_markers.osim",
     >>>     xml_input=f'{TEMPLATES_PATH / imodel}_ik.xml',
     >>>     xml_output=f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_ik.xml",
-    >>>     trc=trials,
+    >>>     trc_dir=trials,
     >>>     mot_output=f"{PROJECT_PATH / iparticipant / '1_inverse_kinematic'}",
     >>>     onsets=onsets,
     >>>     prefix=model
     >>> )
     """
 
-    def __init__(self, model_input, xml_input, xml_output, trc, mot_output, onsets=None, prefix=None):
+    def __init__(self, model_input, xml_input, xml_output, trc_files, mot_output, onsets=None, prefix=None):
         self.model = osim.Model(model_input)
         self.mot_output = mot_output
         self.onsets = onsets
         self.xml_output = xml_output
+
         if prefix:
             self.prefix = prefix
 
-        if not isinstance(trc, list):
-            self.trc = [trc]
+        if not isinstance(trc_files, list):
+            self.trc_files = [trc_files]
         else:
-            self.trc = trc
+            self.trc_files = trc_files
 
-        if not isinstance(self.trc[0], Path):
-            self.trc = [Path(i) for i in self.trc]
+        if not isinstance(self.trc_files[0], Path):
+            self.trc_files = [Path(i) for i in self.trc_files]
 
         # initialize inverse kinematic tool from setup file
         self.ik_tool = osim.InverseKinematicsTool(xml_input)
@@ -74,7 +75,7 @@ class IK:
         self.run_ik_tool()
 
     def run_ik_tool(self):
-        for ifile in self.trc:
+        for ifile in self.trc_files:
             print(f'\t{ifile.stem}')
 
             # set name of input (trc) file and output (mot)
@@ -95,7 +96,7 @@ class IK:
                 # use the trc file to get the start and end times
                 m = osim.MarkerData(f'{ifile}')
                 start = m.getStartFrameTime()
-                end = m.getLastFrameTime() - 1e-2  # -1e-2 because remove last frame resolves some bug
+                end = m.getLastFrameTime() - 1e-2  # -1e-2 because removing last frame resolves some bug
             self.ik_tool.setStartTime(start)
             self.ik_tool.setEndTime(end)
 

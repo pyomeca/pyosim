@@ -17,7 +17,7 @@ offset = 0.05  # take 1 second before and after onsets
 conf = Conf(project_path=PROJECT_PATH)
 
 # participants = conf.get_participants_to_process()
-participants = ['yosc']
+participants = ['dapo']  # launch yosc
 
 for iparticipant in participants:
     print(f'\nparticipant: {iparticipant}')
@@ -31,7 +31,7 @@ for iparticipant in participants:
             model_input=f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled_markers.osim",
             xml_input=f'{TEMPLATES_PATH / imodel}_ik.xml',
             xml_output=f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_ik.xml",
-            trc=trials,
+            trc_files=trials,
             mot_output=f"{PROJECT_PATH / iparticipant / '1_inverse_kinematic'}",
             onsets=onsets,
             prefix=imodel
