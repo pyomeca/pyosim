@@ -7,6 +7,50 @@ import opensim as osim
 
 
 class IK:
+    """
+    Inverse kinematic in pyosim
+
+    Parameters
+    ----------
+    model_input : str
+        Path to the generic model
+    xml_input : str
+        Path to the generic scaling xml
+    xml_output : str
+        Output path of the scaling xml
+    trc : str, Path, list
+        Path or list of path to the marker files (`.trc`)
+    mot_output : Path, str
+        Output directory
+    onsets : dict, optional
+        Dictionary which contains the starting and ending point in second as values and trial name as keys
+    prefix : str, optional
+        Optional prefix to put in front of the output filename (typically model name)
+
+    Examples
+    --------
+
+    >>> from pyosim import Conf
+    >>> from pyosim import IK
+    >>> participant = 'dapo'
+    >>> model = 'wu'
+    >>> PROJECT_PATH = Path('../Misc/project_sample')
+
+    >>> trials = [ifile for ifile in (PROJECT_PATH / participant / '0_markers').glob('*.trc')]
+    >>> conf = Conf(project_path=PROJECT_PATH)
+    >>> onsets = conf.get_conf_field(participant, ['onset'])
+
+    >>> ik = IK(
+    >>>     model_input=f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled_markers.osim",
+    >>>     xml_input=f'{TEMPLATES_PATH / imodel}_ik.xml',
+    >>>     xml_output=f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_ik.xml",
+    >>>     trc=trials,
+    >>>     mot_output=f"{PROJECT_PATH / iparticipant / '1_inverse_kinematic'}",
+    >>>     onsets=onsets,
+    >>>     prefix=model
+    >>> )
+    """
+
     def __init__(self, model_input, xml_input, xml_output, trc, mot_output, onsets=None, prefix=None):
         self.model = osim.Model(model_input)
         self.mot_output = mot_output
