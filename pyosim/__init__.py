@@ -5,6 +5,7 @@ from .model import *
 from .conf import *
 from .ik import *
 from .id import *
+from .so import *
 
 __author__ = "Romain Martinez"
 
