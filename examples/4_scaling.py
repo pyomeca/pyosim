@@ -26,13 +26,16 @@ for iparticipant in participants:
     height = conf.get_conf_field(iparticipant, ['height'])
 
     for imodel in model_names:
-        model_path = f'{MODELS_PATH / imodel}.osim'
-        scaling = Scale(
-            model_input=model_path,
-            model_output=f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled.osim",
-            xml_input=f'{TEMPLATES_PATH / imodel}_scaling.xml',
-            xml_output=f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_scaled.xml",
-            static_path=static_path,
+        path_kwargs = {
+            'model_input': f'{MODELS_PATH / imodel}.osim',
+            'model_output': f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled.osim",
+            'xml_input': f'{TEMPLATES_PATH / imodel}_scaling.xml',
+            'xml_output': f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_scaled.xml",
+            'static_path': static_path
+        }
+
+        Scale(
+            **path_kwargs,
             mass=mass,
             height=height * 10,
             remove_unused=False

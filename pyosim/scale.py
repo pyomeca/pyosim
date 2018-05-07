@@ -29,6 +29,42 @@ class Scale:
         Participant's age (year)
     remove_unused : bool
         If unused markers have to be removed (default = True in OpenSim)
+
+    Examples
+    --------
+    >>> from pathlib import Path
+    >>>
+    >>> from pyosim import Conf
+    >>> from pyosim import Scale
+    >>>
+    >>> # path
+    >>> PROJECT_PATH = Path('../Misc/project_sample')
+    >>> MODELS_PATH = PROJECT_PATH / '_models'
+    >>> TEMPLATES_PATH = PROJECT_PATH / '_templates'
+    >>>
+    >>> model = 'wu'
+    >>> participant = 'dapo'
+    >>> static_path = f"{PROJECT_PATH / participant / '0_markers' / 'IRSST_'}DapOd0.trc"
+    >>>
+    >>> conf = Conf(project_path=PROJECT_PATH)
+    >>> mass = conf.get_conf_field(participant, ['mass'])
+    >>> height = conf.get_conf_field(participant, ['height'])
+    >>>
+    >>>
+    >>> path_kwargs = {
+    >>>     'model_input': f'{MODELS_PATH / model}.osim',
+    >>>     'model_output': f"{PROJECT_PATH / participant / '_models' / model}_scaled.osim",
+    >>>     'xml_input': f'{TEMPLATES_PATH / model}_scaling.xml',
+    >>>     'xml_output': f"{PROJECT_PATH / participant / '_xml' / model}_scaled.xml",
+    >>>     'static_path': static_path
+    >>> }
+    >>>
+    >>> Scale(
+    >>>     **path_kwargs,
+    >>>     mass=mass,
+    >>>     height=height * 10,
+    >>>     remove_unused=False
+    >>> )
     """
 
     def __init__(self, model_input, model_output, xml_input, xml_output, static_path, mass=-1, height=-1, age=-1,
