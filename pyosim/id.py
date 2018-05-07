@@ -15,9 +15,9 @@ class ID:
     model_input : str
         Path to the osim model
     xml_input : str
-        Path to the generic ik xml
+        Path to the generic id xml
     xml_output : str
-        Output path of the ik xml
+        Output path of the id xml
     xml_forces : str
         Path to the generic forces sensor xml
     forces_dir : str
@@ -35,25 +35,29 @@ class ID:
     --------
     >>> from pyosim import Conf
     >>> from pyosim import ID
+    >>> from pathlib import Path
+    >>>
+    >>> PROJECT_PATH = Path('../Misc/project_sample')
+    >>> TEMPLATES_PATH = PROJECT_PATH / '_templates'
+    >>>
     >>> participant = 'dapo'
     >>> model = 'wu'
-    >>> PROJECT_PATH = Path('../Misc/project_sample')
-
-    >>> trials = [ifile for ifile in (PROJECT_PATH / iparticipant / '1_inverse_kinematic').glob('*.mot')]
+    >>>
+    >>> trials = [ifile for ifile in (PROJECT_PATH / participant / '1_inverse_kinematic').glob('*.mot')]
     >>> conf = Conf(project_path=PROJECT_PATH)
     >>> onsets = conf.get_conf_field(participant, ['onset'])
-
+    >>>
     >>> idyn = ID(
-    >>>         model_input=f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled_markers.osim",
-    >>>         xml_input=f'{TEMPLATES_PATH / imodel}_ik.xml',
-    >>>         xml_output=f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_ik.xml",
-    >>>         xml_forces=f'{TEMPLATES_PATH}/forces_sensor.xml',
-    >>>         forces_dir=f"{PROJECT_PATH / iparticipant / '0_forces'}",
-    >>>         mot_files=trials,
-    >>>         sto_output=f"{(PROJECT_PATH / iparticipant / '2_inverse_dynamic').resolve()}",
-    >>>         prefix=imodel,
-    >>>         low_pass=10
-    >>>     )
+    >>>     model_input=f"{PROJECT_PATH / participant / '_models' / model}_scaled_markers.osim",
+    >>>     xml_input=f'{TEMPLATES_PATH / model}_ik.xml',
+    >>>     xml_output=f"{PROJECT_PATH / participant / '_xml' / model}_ik.xml",
+    >>>     xml_forces=f'{TEMPLATES_PATH}/forces_sensor.xml',
+    >>>     forces_dir=f"{PROJECT_PATH / participant / '0_forces'}",
+    >>>     mot_files=trials,
+    >>>     sto_output=f"{(PROJECT_PATH / participant / '2_inverse_dynamic').resolve()}",
+    >>>     prefix=model,
+    >>>     low_pass=10
+    >>> )
     """
 
     def __init__(self, model_input, xml_input, xml_output, xml_forces, forces_dir, mot_files, sto_output, prefix=None,
@@ -97,7 +101,7 @@ class ID:
                 start = motion.getFirstTime()
                 end = motion.getLastTime()
 
-                # external load file
+                # external loads file
                 loads = osim.ExternalLoads(model, self.xml_forces)
                 if self.prefix:
                     loads.setDataFileName(
@@ -127,5 +131,6 @@ class ID:
                 id_tool.setOutputGenForceFileName(f"{filename}.sto")
                 id_tool.setResultsDir(f'{self.sto_output}')
 
+                id_tool.printToXML(self.xml_output)
                 id_tool.run()
                 temp_xml.unlink()  # delete temporary xml file
