@@ -24,7 +24,6 @@ params = {
 }
 
 participants = conf.get_participants_to_process()
-participants = participants[4:]
 
 for iparticipant in participants:
     print(f'\nparticipant: {iparticipant}')
