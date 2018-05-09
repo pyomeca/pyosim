@@ -11,7 +11,7 @@ from pyosim import Conf
 from pyosim.obj import Analogs3dOsim
 
 # path
-PROJECT_PATH = Path('../Misc/project_sample')
+PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 CALIBRATION_MATRIX = Path('../tests/data/forces_calibration_matrix.csv')
 
 conf = Conf(project_path=PROJECT_PATH)
@@ -43,6 +43,7 @@ for iparticipant in participants:
             try:
                 forces = Analogs3dOsim.from_c3d(itrial, names=iassign_without_nans, prefix=':')
                 if nan_idx:
+                    forces.get_nan_idx = np.array(nan_idx)
                     # if there is any empty assignment, fill the dimension with nan
                     for i in nan_idx:
                         forces = np.insert(forces, i, np.nan, axis=1)
@@ -92,11 +93,11 @@ for iparticipant in participants:
 
         ten_percents = int(forces.shape[-1] * 0.1)
         if idx[0][0] < ten_percents:
-            raise ValueError(f'onset is less than 10% of the trial ({idx[0][0]/forces.shape[-1]*100:2f}%)')
+            raise ValueError(f'onset is less than 10% of the trial ({idx[0][0] / forces.shape[-1] * 100:2f}%)')
 
         ninety_percents = int(forces.shape[-1] * 0.97)
         if idx[0][1] > ninety_percents:
-            raise ValueError(f'onset is less than 90% of the trial ({idx[0][1]/forces.shape[-1]*100:.2f}%)')
+            raise ValueError(f'onset is less than 90% of the trial ({idx[0][1] / forces.shape[-1] * 100:.2f}%)')
 
         _, ax = plt.subplots(nrows=1, ncols=1)
         norm.plot(ax=ax)

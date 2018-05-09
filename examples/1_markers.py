@@ -10,7 +10,7 @@ from pyosim import Conf
 from pyosim.obj import Markers3dOsim
 
 # path
-PROJECT_PATH = Path('../Misc/project_sample')
+PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 
 conf = Conf(project_path=PROJECT_PATH)
 
@@ -35,7 +35,9 @@ for iparticipant in participants:
                 if Path(idir).stem == 'MODEL2':
                     iassign = [i if n < 43 else '' for n, i in enumerate(iassign)]
                     # skip some trials
-                    if itrial.stem[-1] != '0':
+                    if itrial.stem[-1] == '0' or itrial.stem[-1] == '6':
+                        pass
+                    else:
                         blacklist = True
                         break
 

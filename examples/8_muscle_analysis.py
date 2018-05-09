@@ -8,7 +8,7 @@ from pyosim import Conf
 from pyosim import MA
 
 # path
-PROJECT_PATH = Path('../Misc/project_sample')
+PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 TEMPLATES_PATH = PROJECT_PATH / '_templates'
 
 model_names = ['wu', 'das']

@@ -9,7 +9,7 @@ from pyosim import Conf
 from pyosim import Project
 
 # path
-PROJECT_PATH = Path('../Misc/project_sample')
+PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 CONF_TEMPLATE = Path('../tests/_conf.csv')
 
 # remove project if already exists (you don't need to do this)

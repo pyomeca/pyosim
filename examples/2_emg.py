@@ -11,7 +11,7 @@ from pyosim import Conf
 from pyosim.obj import Analogs3dOsim
 
 # path
-PROJECT_PATH = Path('../Misc/project_sample')
+PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 
 conf = Conf(project_path=PROJECT_PATH)
 
@@ -64,6 +64,7 @@ for iparticipant in participants:
                 emg = Analogs3dOsim.from_c3d(itrial, names=iassign_without_nans, prefix=':')
                 if nan_idx:
                     # if there is any empty assignment, fill the dimension with nan
+                    emg.get_nan_idx = np.array(nan_idx)
                     for i in nan_idx:
                         emg = np.insert(emg, i, np.nan, axis=1)
                     print(f'\t{itrial.stem} (NaNs: {nan_idx})')
