@@ -12,9 +12,11 @@ from pyosim.obj import Analogs3dOsim
 
 # path
 PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
+# PROJECT_PATH = Path('/home/romain/Documents/codes/pyosim/Misc/project_sample')
 CALIBRATION_MATRIX = Path('../tests/data/forces_calibration_matrix.csv')
 
 conf = Conf(project_path=PROJECT_PATH)
+conf.check_confs()
 
 calibration_matrix = np.genfromtxt(CALIBRATION_MATRIX, delimiter=',')
 params = {
@@ -62,14 +64,15 @@ for iparticipant in participants:
         nan_rows = np.isnan(forces).any(axis=1).ravel()
         print(f'\t\tremoving {nan_rows.sum()} nan frames (indices: {np.argwhere(nan_rows)})')
         forces = forces[..., ~nan_rows]
+
         # processing (offset during the first second, calibration, )
         forces = forces \
             .center(mu=np.nanmedian(forces[..., 10:int(forces.get_rate)], axis=-1), axis=-1) \
-            .squeeze().T.dot(calibration_matrix).T[np.newaxis] \
+            .squeeze().T.matmul(calibration_matrix.T) \
             .low_pass(freq=forces.get_rate, order=params['order'], cutoff=params['low_pass_cutoff']) \
             .dot(-1)
 
-        norm = Analogs3dOsim(forces.norm().reshape(1, 1, -1))
+        norm = Analogs3dOsim(forces[0, :3, :].norm(axis=0).reshape(1, 1, -1))
         idx = norm[0, 0, :].detect_onset(
             threshold=5,  # 5 Newtons
             above=int(forces.get_rate) / 2,
@@ -77,16 +80,18 @@ for iparticipant in participants:
         )
 
         # Special cases
-        if itrial.stem == 'MarSF12H4_1.c3d':
+        if itrial.stem == 'MarSF12H4_1':
             idx[0][1] = 11983
-        if itrial.stem == 'MarSF6H4_1.c3d':
+        if itrial.stem == 'MarSF6H4_1':
             idx[0][1] = 10672
-        if itrial.stem == 'GatBH18H4_2.c3d':
+        if itrial.stem == 'GatBH18H4_2':
             idx[0][1] = 17122
-        if itrial.stem == 'GatBH18H4_2.c3d':
+        if itrial.stem == 'GatBH18H4_2':
             idx[0][1] = 17122
-        if itrial.stem == 'GatBH18H4_3.c3d':
+        if itrial.stem == 'GatBH18H4_3':
+            idx = idx[0][None]
             idx[0][0] = 5271
+            idx[0][1] = 15965
 
         if idx.shape[0] > 1:
             raise ValueError('more than one onset')
