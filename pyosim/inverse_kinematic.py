@@ -6,7 +6,7 @@ from pathlib import Path
 import opensim as osim
 
 
-class IK:
+class InverseKinematic:
     """
     Inverse kinematic in pyosim
 
@@ -32,7 +32,7 @@ class IK:
     >>> from pathlib import Path
     >>>
     >>> from pyosim import Conf
-    >>> from pyosim import IK
+    >>> from pyosim import InverseKinematic
     >>>
     >>> PROJECT_PATH = Path('../Misc/project_sample')
     >>> TEMPLATES_PATH = PROJECT_PATH / '_templates'
@@ -44,7 +44,7 @@ class IK:
     >>> conf = Conf(project_path=PROJECT_PATH)
     >>> onsets = conf.get_conf_field(participant, ['onset'])
     >>>
-    >>> ik = IK(
+    >>> ik = InverseKinematic(
     >>>     model_input=f"{PROJECT_PATH / participant / '_models' / model}_scaled_markers.osim",
     >>>     xml_input=f'{TEMPLATES_PATH / model}_ik.xml',
     >>>     xml_output=f"{PROJECT_PATH / participant / '_xml' / model}_ik.xml",
