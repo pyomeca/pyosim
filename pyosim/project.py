@@ -78,7 +78,8 @@ class Project:
             '1_inverse_kinematic',  # generated MOT motion files from inverse kinematic
             '2_inverse_dynamic',  # generated STO files from inverse dynamic
             '3_static_optimization',  # generated STO files from static optimization
-            '4_muscle_analysis'  # generated STO files from muscle analysis
+            '4_muscle_analysis',  # generated STO files from muscle analysis
+            '5_joint_reaction_force'  # generated STO files from joint reaction force analysis
         ]
 
         count = 0
