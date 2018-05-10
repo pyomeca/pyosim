@@ -35,7 +35,7 @@ for iparticipant in participants:
                 if Path(idir).stem == 'MODEL2':
                     iassign = [i if n < 43 else '' for n, i in enumerate(iassign)]
                     # skip some trials
-                    if itrial.stem[-1] == '0' or itrial.stem[-1] == '6':
+                    if itrial.stem[-1] == '0':
                         pass
                     else:
                         blacklist = True

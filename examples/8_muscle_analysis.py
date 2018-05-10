@@ -5,7 +5,7 @@ Example: run muscle analysis and export sto
 from pathlib import Path
 
 from pyosim import Conf
-from pyosim import MA
+from pyosim import MuscleAnalysis
 
 # path
 PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
@@ -14,6 +14,7 @@ TEMPLATES_PATH = PROJECT_PATH / '_templates'
 model_names = ['wu', 'das']
 
 conf = Conf(project_path=PROJECT_PATH)
+conf.check_confs()
 
 participants = conf.get_participants_to_process()
 
@@ -33,11 +34,11 @@ for iparticipant in participants:
             'xml_output': f"{(PROJECT_PATH / iparticipant / '_xml' / imodel).resolve()}_ma.xml",
             'xml_forces': f"{(TEMPLATES_PATH / 'forces_sensor.xml').resolve()}",
             'xml_actuators': f"{(TEMPLATES_PATH / f'{imodel}_actuators.xml').resolve()}",
-            'forces_dir': f"{(PROJECT_PATH / iparticipant / '0_forces').resolve()}",
+            'ext_forces_dir': f"{(PROJECT_PATH / iparticipant / '0_forces').resolve()}",
             'sto_output': f"{(PROJECT_PATH / iparticipant / '4_muscle_analysis').resolve()}",
         }
 
-        ma = MA(
+        MuscleAnalysis(
             **path_kwargs,
             mot_files=trials,
             prefix=imodel,

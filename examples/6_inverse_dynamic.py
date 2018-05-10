@@ -5,7 +5,7 @@ Example: run inverse dynamic and export sto
 from pathlib import Path
 
 from pyosim import Conf
-from pyosim import ID
+from pyosim import InverseDynamic
 
 # path
 PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
@@ -14,6 +14,7 @@ TEMPLATES_PATH = PROJECT_PATH / '_templates'
 model_names = ['wu', 'das']
 
 conf = Conf(project_path=PROJECT_PATH)
+conf.check_confs()
 
 participants = conf.get_participants_to_process()
 
@@ -35,7 +36,7 @@ for iparticipant in participants:
             'sto_output': f"{(PROJECT_PATH / iparticipant / '2_inverse_dynamic').resolve()}",
         }
 
-        ID(
+        InverseDynamic(
             **path_kwargs,
             mot_files=trials,
             prefix=imodel,

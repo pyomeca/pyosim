@@ -65,18 +65,19 @@ class Conf:
         """check if all participants have a configuration file and update it in the project's configuration file"""
 
         for index, irow in self.project_conf.iterrows():
-            if irow['conf_file'] == irow['conf_file']:  # check if nan
-                if Path(irow['conf_file']).is_file():
-                    print(f'{irow["participant"]}: checked')
-                else:
-                    raise ValueError(f'{irow["participant"]} does not have a configuration file in {irow["conf_file"]}')
+            if not irow['process']:
+                break
+            default = (self.project_path / irow['participant'] / '_conf.json')
+            is_nan = irow['conf_file'] != irow['conf_file']
+            if not is_nan and Path(irow['conf_file']).is_file():
+                print(f'{irow["participant"]}: checked')
+            if (is_nan and default.is_file()) or default.is_file():  # check if nan or file exist in default location
+                conf_file = str(default.resolve())
+                self.project_conf.loc[index, 'conf_file'] = conf_file
+                self.update_conf(conf_file, {'conf_file': conf_file})
+                print(f'{irow["participant"]}: updated in project conf')
             else:
-                d = (self.project_path / irow['participant'] / '_conf.json')
-                if d.is_file():
-                    conf_file = str(d.resolve())
-                    self.project_conf.loc[index, 'conf_file'] = conf_file
-                    self.update_conf(conf_file, {'conf_file': conf_file})
-                    print(f'{irow["participant"]}: updated in project conf')
+                raise ValueError(f'{irow["participant"]} does not have a configuration file in {irow["conf_file"]}')
 
         # update conf file
         print('\n')

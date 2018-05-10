@@ -12,9 +12,10 @@ PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 MODELS_PATH = PROJECT_PATH / '_models'
 TEMPLATES_PATH = PROJECT_PATH / '_templates'
 
-model_names = ['das', 'wu']
+model_names = ['wu', 'das']
 
 conf = Conf(project_path=PROJECT_PATH)
+conf.check_confs()
 
 participants = conf.get_participants_to_process()
 
