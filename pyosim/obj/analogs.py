@@ -34,6 +34,8 @@ class Analogs3dOsim(Analogs3d):
 
         # set metadata
         table.setColumnLabels(self.get_labels)
+        table.addTableMetaDataString('nRows', str(self.shape[-1]))
+        table.addTableMetaDataString('nColumns', str(self.shape[1]))
 
         time_vector = np.arange(start=0, stop=1 / self.get_rate * self.shape[2], step=1 / self.get_rate)
 

@@ -84,7 +84,8 @@ for iparticipant in participants:
             .center() \
             .rectify() \
             .low_pass(freq=emg.get_rate, order=params['order'], cutoff=params['low_pass_cutoff']) \
-            .normalization(ref=mva, scale=1)
+            .normalization(ref=mva, scale=1) \
+            .clip(0)
 
         emg.get_labels = params['emg_labels']
         sto_filename = f"{PROJECT_PATH / iparticipant / '0_emg' / itrial.stem}.sto"
