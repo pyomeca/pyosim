@@ -72,7 +72,6 @@ class InverseDynamics:
             prefix=None,
             low_pass=None
     ):
-
         self.model_input = model_input
         self.xml_input = xml_input
         self.xml_output = xml_output
@@ -116,7 +115,6 @@ class InverseDynamics:
                 id_tool.setStartTime(start)
                 id_tool.setEndTime(end)
                 id_tool.setCoordinatesFileName(f'{ifile.resolve()}')
-                id_tool.setExternalLoadsFileName(f'{temp_xml}')
 
                 if self.low_pass:
                     id_tool.setLowpassCutoffFrequency(self.low_pass)
@@ -142,6 +140,7 @@ class InverseDynamics:
 
                     temp_xml = Path('temp.xml')
                     loads.printToXML(f'{temp_xml.resolve()}')  # temporary xml file
+                    id_tool.setExternalLoadsFileName(f'{temp_xml}')
 
                 id_tool.printToXML(self.xml_output)
                 id_tool.run()
