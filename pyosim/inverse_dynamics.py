@@ -6,7 +6,7 @@ from pathlib import Path
 import opensim as osim
 
 
-class InverseDynamic:
+class InverseDynamics:
     """
     Inverse dynamic in pyosim
 
@@ -34,7 +34,7 @@ class InverseDynamic:
     Examples
     --------
     >>> from pyosim import Conf
-    >>> from pyosim import InverseDynamic
+    >>> from pyosim import InverseDynamics
     >>> from pathlib import Path
     >>>
     >>> PROJECT_PATH = Path('../Misc/project_sample')
@@ -47,7 +47,7 @@ class InverseDynamic:
     >>> conf = Conf(project_path=PROJECT_PATH)
     >>> onsets = conf.get_conf_field(participant, ['onset'])
     >>>
-    >>> idyn = InverseDynamic(
+    >>> idyn = InverseDynamics(
     >>>     model_input=f"{PROJECT_PATH / participant / '_models' / model}_scaled_markers.osim",
     >>>     xml_input=f'{TEMPLATES_PATH / model}_ik.xml',
     >>>     xml_output=f"{PROJECT_PATH / participant / '_xml' / model}_ik.xml",
@@ -60,12 +60,23 @@ class InverseDynamic:
     >>> )
     """
 
-    def __init__(self, model_input, xml_input, xml_output, xml_forces, forces_dir, mot_files, sto_output, prefix=None,
-                 low_pass=None):
+    def __init__(
+            self,
+            model_input,
+            xml_input,
+            xml_output,
+            mot_files,
+            sto_output,
+            xml_forces=None,
+            forces_dir=None,
+            prefix=None,
+            low_pass=None
+    ):
+
         self.model_input = model_input
-        self.sto_output = sto_output
         self.xml_input = xml_input
         self.xml_output = xml_output
+        self.sto_output = sto_output
         self.xml_forces = xml_forces
         self.forces_dir = forces_dir
         self.low_pass = low_pass
@@ -101,21 +112,6 @@ class InverseDynamic:
                 start = motion.getFirstTime()
                 end = motion.getLastTime()
 
-                # external loads file
-                loads = osim.ExternalLoads(model, self.xml_forces)
-                if self.prefix:
-                    loads.setDataFileName(
-                        f"{Path(self.forces_dir, ifile.stem.replace(f'{self.prefix}_', '')).resolve()}.sto"
-                    )
-                else:
-                    loads.setDataFileName(
-                        f"{Path(self.forces_dir, ifile.stem).resolve()}.sto"
-                    )
-                loads.setExternalLoadsModelKinematicsFileName(f'{ifile.resolve()}')
-
-                temp_xml = Path('temp.xml')
-                loads.printToXML(f'{temp_xml.resolve()}')  # temporary xml file
-
                 # inverse dynamics tool
                 id_tool.setStartTime(start)
                 id_tool.setEndTime(end)
@@ -131,6 +127,24 @@ class InverseDynamic:
                 id_tool.setOutputGenForceFileName(f"{filename}.sto")
                 id_tool.setResultsDir(f'{self.sto_output}')
 
+                # external loads file
+                if self.forces_dir:
+                    loads = osim.ExternalLoads(model, self.xml_forces)
+                    if self.prefix:
+                        loads.setDataFileName(
+                            f"{Path(self.forces_dir, ifile.stem.replace(f'{self.prefix}_', '')).resolve()}.sto"
+                        )
+                    else:
+                        loads.setDataFileName(
+                            f"{Path(self.forces_dir, ifile.stem).resolve()}.sto"
+                        )
+                    loads.setExternalLoadsModelKinematicsFileName(f'{ifile.resolve()}')
+
+                    temp_xml = Path('temp.xml')
+                    loads.printToXML(f'{temp_xml.resolve()}')  # temporary xml file
+
                 id_tool.printToXML(self.xml_output)
                 id_tool.run()
-                temp_xml.unlink()  # delete temporary xml file
+
+                if self.forces_dir:
+                    temp_xml.unlink()  # delete temporary xml file

@@ -5,7 +5,7 @@ Example: run inverse kinematic and export mot
 from pathlib import Path
 
 from pyosim import Conf
-from pyosim import InverseKinematic
+from pyosim import InverseKinematics
 
 # path
 PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
@@ -34,7 +34,7 @@ for iparticipant in participants:
             'mot_output': f"{PROJECT_PATH / iparticipant / '1_inverse_kinematic'}",
         }
 
-        InverseKinematic(
+        InverseKinematics(
             **path_kwargs,
             trc_files=trials,
             onsets=onsets,
