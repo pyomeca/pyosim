@@ -29,7 +29,7 @@ for iparticipant in participants:
     for imodel in model_names:
         path_kwargs = {
             'model_input': f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled_markers.osim",
-            'xml_input': f'{TEMPLATES_PATH / imodel}_ik.xml',
+            'xml_input': f'{TEMPLATES_PATH / imodel}_id.xml',
             'xml_output': f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_id.xml",
             'xml_forces': f'{TEMPLATES_PATH}/forces_sensor.xml',
             'forces_dir': f"{PROJECT_PATH / iparticipant / '0_forces'}",
