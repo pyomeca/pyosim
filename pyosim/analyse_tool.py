@@ -126,6 +126,7 @@ class AnalyzeTool:
                     force_set = osim.ArrayStr()
                     force_set.append(self.xml_actuators)
                     analyze_tool.setForceSetFiles(force_set)
+                    analyze_tool.updateModelForces(model, self.xml_actuators)
 
                 # get starting and ending time
                 motion = osim.Storage(f'{ifile.resolve()}')
