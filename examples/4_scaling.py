@@ -8,6 +8,7 @@ from pyosim import Conf
 from pyosim import Scale
 
 # path
+WU_MASS_FACTOR = 24.385 / 68.2
 PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 MODELS_PATH = PROJECT_PATH / '_models'
 TEMPLATES_PATH = PROJECT_PATH / '_templates'
@@ -27,6 +28,10 @@ for iparticipant in participants:
     height = conf.get_conf_field(iparticipant, ['height'])
 
     for imodel in model_names:
+        if imodel == 'wu':
+            # mass of the upper limb + torso
+            mass = mass * WU_MASS_FACTOR
+
         path_kwargs = {
             'model_input': f'{MODELS_PATH / imodel}.osim',
             'model_output': f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled.osim",

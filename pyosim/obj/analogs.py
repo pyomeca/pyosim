@@ -17,13 +17,15 @@ class Analogs3dOsim(Analogs3d):
         if obj is None or not isinstance(obj, Analogs3dOsim):
             return
 
-    def to_sto(self, filename):
+    def to_sto(self, filename, metadata=None):
         """
         Write a sto file from a Analogs3dOsim
         Parameters
         ----------
         filename : string
             path of the file to write
+        metadata : dict, optional
+            dict with optional metadata to add in the output file
         """
         filename = Path(filename)
         # Make sure the directory exists, otherwise create it
@@ -36,6 +38,10 @@ class Analogs3dOsim(Analogs3d):
         table.setColumnLabels(self.get_labels)
         table.addTableMetaDataString('nRows', str(self.shape[-1]))
         table.addTableMetaDataString('nColumns', str(self.shape[1]))
+
+        if metadata:
+            for key, value in metadata.items():
+                table.addTableMetaDataString(key, value)
 
         time_vector = np.arange(start=0, stop=1 / self.get_rate * self.shape[2], step=1 / self.get_rate)
 

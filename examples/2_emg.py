@@ -89,4 +89,4 @@ for iparticipant in participants:
 
         emg.get_labels = params['emg_labels']
         sto_filename = f"{PROJECT_PATH / iparticipant / '0_emg' / itrial.stem}.sto"
-        emg.to_sto(filename=sto_filename)
+        emg.to_sto(filename=sto_filename, metadata={'nColumns': emg.shape[1] + 1})
