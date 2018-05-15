@@ -2,6 +2,8 @@
 Example: export emg to sto
 """
 
+import os
+from multiprocessing import Pool
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +14,7 @@ from pyosim.obj import Analogs3dOsim
 
 # path
 PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
+MULTIPROC = True
 
 conf = Conf(project_path=PROJECT_PATH)
 
@@ -19,7 +22,7 @@ params = {
     'band_pass_cutoff': [10, 425],
     'low_pass_cutoff': 5,
     'order': 4,
-    'outlier': 3,
+    'outlier': 5,
     'emg_labels': conf.get_conf_field(participant='dapo', field=['emg', 'targets'])
 }
 
@@ -49,8 +52,8 @@ for iparticipant in participants:
         })
     mva = np.array(mva, dtype=float)
 
-    # --- Export EMG
-    for itrial in Path(directories[0]).glob('*.c3d'):
+
+    def process(trial):
         # try participant's channel assignment
         for iassign in assigned:
             # get index where assignment are empty
@@ -61,15 +64,15 @@ for iparticipant in participants:
                 iassign_without_nans = iassign
 
             try:
-                emg = Analogs3dOsim.from_c3d(itrial, names=iassign_without_nans, prefix=':')
+                emg = Analogs3dOsim.from_c3d(trial, names=iassign_without_nans, prefix=':')
                 if nan_idx:
                     # if there is any empty assignment, fill the dimension with nan
                     emg.get_nan_idx = np.array(nan_idx)
                     for i in nan_idx:
                         emg = np.insert(emg, i, np.nan, axis=1)
-                    print(f'\t{itrial.stem} (NaNs: {nan_idx})')
+                    print(f'\t{trial.stem} (NaNs: {nan_idx})')
                 else:
-                    print(f'\t{itrial.stem}')
+                    print(f'\t{trial.stem}')
 
                 # check if dimensions are ok
                 if not emg.shape[1] == len(iassign):
@@ -85,8 +88,16 @@ for iparticipant in participants:
             .rectify() \
             .low_pass(freq=emg.get_rate, order=params['order'], cutoff=params['low_pass_cutoff']) \
             .normalization(ref=mva, scale=1) \
-            .clip(0)
+            .clip(0, 1)
 
         emg.get_labels = params['emg_labels']
-        sto_filename = f"{PROJECT_PATH / iparticipant / '0_emg' / itrial.stem}.sto"
+        sto_filename = f"{PROJECT_PATH / iparticipant / '0_emg' / trial.stem}.sto"
         emg.to_sto(filename=sto_filename, metadata={'nColumns': emg.shape[1] + 1})
+
+
+    if MULTIPROC:
+        pool = Pool(os.cpu_count())
+        pool.map(process, Path(directories[0]).glob('*.c3d'))
+    else:
+        for itrial in Path(directories[0]).glob('*.c3d'):
+            process(itrial)
