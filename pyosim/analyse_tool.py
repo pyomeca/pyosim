@@ -114,6 +114,69 @@ class AnalyzeTool:
                 # skip file if user specified a prefix and prefix is not present in current file
                 pass
             else:
+                ########
+                # model
+                model = osim.Model(self.model_input)
+
+                # get starting and ending time
+                motion = osim.Storage(f'{ifile.resolve()}')
+                first_time = motion.getFirstTime()
+                last_time = motion.getLastTime()
+
+                # prepare external forces xml file
+                if self.xml_forces:
+                    external_loads = osim.ExternalLoads(model, self.xml_forces)
+                    if self.prefix:
+                        external_loads.setDataFileName(
+                            f"{Path(self.ext_forces_dir, ifile.stem.replace(f'{self.prefix}_', '')).resolve()}.sto"
+                        )
+                    else:
+                        external_loads.setDataFileName(
+                            f"{Path(self.ext_forces_dir, ifile.stem).resolve()}.sto"
+                        )
+                    external_loads.setExternalLoadsModelKinematicsFileName(f'{ifile.resolve()}')
+                    if self.low_pass:
+                        external_loads.setLowpassCutoffFrequencyForLoadKinematics(self.low_pass)
+                    temp_xml = Path('temp.xml')
+                    external_loads.printToXML(f'{temp_xml.resolve()}')  # temporary xml file
+
+                # add reserve actuators
+                if self.xml_actuators:
+                    force_set = osim.ArrayStr()
+                    force_set.append(self.xml_actuators)
+                    model.setForceSetFiles(force_set)
+
+
+
+
+                # construct joint reaction analysis
+                joint_reaction = osim.JointReaction(model)
+                joint_reaction.setName('JointReaction')
+                joint_reaction.setStartTime(first_time)
+                joint_reaction.setEndTime(last_time)
+                joint_reaction.setForcesFileName(
+                    f"{Path(self.muscle_forces_dir, ifile.stem).resolve()}_StaticOptimization_force.sto"
+                )
+                model.addAnalysis(joint_reaction)
+
+                # analysis tool
+                analyze_tool = osim.AnalyzeTool(model)
+                analyze_tool.setName(ifile.stem)
+                analyze_tool.setModel(model)
+                analyze_tool.setModelFilename(Path(self.model_input).stem)
+                analyze_tool.setInitialTime(first_time)
+                analyze_tool.setFinalTime(last_time)
+                if self.low_pass:
+                    analyze_tool.setLowpassCutoffFrequency(self.low_pass)
+                analyze_tool.setCoordinatesFileName(f'{ifile.resolve()}')
+                analyze_tool.setExternalLoadsFileName(f'{temp_xml}')
+                analyze_tool.setLoadModelAndInput(True)
+                analyze_tool.setResultsDir(f'{self.sto_output}')
+
+                analyze_tool.printToXML('test.xml')
+
+                ############
+
                 print(f'\t{ifile.stem}')
 
                 analyze_tool = osim.AnalyzeTool(self.xml_input, False)
@@ -140,7 +203,7 @@ class AnalyzeTool:
 
                 analyze_tool.setCoordinatesFileName(f'{ifile.resolve()}')
 
-                # external loads file
+                # prepare external forces xml file
                 if self.xml_forces:
                     loads = osim.ExternalLoads(model, self.xml_forces)
                     if self.prefix:
