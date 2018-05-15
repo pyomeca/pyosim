@@ -43,5 +43,6 @@ for iparticipant in participants:
             mot_files=trials,
             prefix=imodel,
             low_pass=5,
-            remove_empty_files=True
+            remove_empty_files=True,
+            multi=True
         )

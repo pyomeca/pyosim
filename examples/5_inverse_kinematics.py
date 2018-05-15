@@ -38,5 +38,6 @@ for iparticipant in participants:
             **path_kwargs,
             trc_files=trials,
             onsets=onsets,
-            prefix=imodel
+            prefix=imodel,
+            multi=True
         )

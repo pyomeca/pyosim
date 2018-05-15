@@ -40,5 +40,6 @@ for iparticipant in participants:
             **path_kwargs,
             mot_files=trials,
             prefix=imodel,
-            low_pass=10
+            low_pass=10,
+            multi=True
         )

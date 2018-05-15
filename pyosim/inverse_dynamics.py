@@ -30,6 +30,8 @@ class InverseDynamics:
         Optional prefix to put in front of the output filename (typically model name)
     low_pass : int, optional
         Cutoff frequency for an optional low pass filter on coordinates
+    multi : bool, optional
+        Launch InverseDynamics in multiprocessing if True
 
     Examples
     --------
@@ -70,7 +72,8 @@ class InverseDynamics:
             xml_forces=None,
             forces_dir=None,
             prefix=None,
-            low_pass=None
+            low_pass=None,
+            multi=False
     ):
         self.model_input = model_input
         self.xml_input = xml_input
@@ -79,6 +82,7 @@ class InverseDynamics:
         self.xml_forces = xml_forces
         self.forces_dir = forces_dir
         self.low_pass = low_pass
+        self.multi = multi
 
         if prefix:
             self.prefix = prefix
@@ -91,59 +95,69 @@ class InverseDynamics:
         if not isinstance(self.mot_files[0], Path):
             self.mot_files = [Path(i) for i in self.mot_files]
 
-        self.run_id_tool()
+        self.main_loop()
 
-    def run_id_tool(self):
-        for ifile in self.mot_files:
-            if self.prefix and not ifile.stem.startswith(self.prefix):
-                # skip file if user specified a prefix and prefix is not present in current file
-                pass
-            else:
-                print(f'\t{ifile.stem}')
+    def main_loop(self):
+        if self.multi:
+            import os
+            from multiprocessing import Pool
 
-                # initialize inverse dynamic tool from setup file
-                model = osim.Model(self.model_input)
-                id_tool = osim.InverseDynamicsTool(self.xml_input)
-                id_tool.setModel(model)
+            pool = Pool(os.cpu_count())
+            pool.map(self.run_id_tool, self.mot_files)
+        else:
+            for itrial in self.mot_files:
+                self.run_id_tool(itrial)
 
-                # get starting and ending time
-                motion = osim.Storage(f'{ifile.resolve()}')
-                start = motion.getFirstTime()
-                end = motion.getLastTime()
+    def run_id_tool(self, trial):
+        if self.prefix and not trial.stem.startswith(self.prefix):
+            # skip file if user specified a prefix and prefix is not present in current file
+            pass
+        else:
+            print(f'\t{trial.stem}')
 
-                # inverse dynamics tool
-                id_tool.setStartTime(start)
-                id_tool.setEndTime(end)
-                id_tool.setCoordinatesFileName(f'{ifile.resolve()}')
+            # initialize inverse dynamic tool from setup file
+            model = osim.Model(self.model_input)
+            id_tool = osim.InverseDynamicsTool(self.xml_input)
+            id_tool.setModel(model)
 
-                if self.low_pass:
-                    id_tool.setLowpassCutoffFrequency(self.low_pass)
+            # get starting and ending time
+            motion = osim.Storage(f'{trial.resolve()}')
+            start = motion.getFirstTime()
+            end = motion.getLastTime()
 
-                # set name of input (mot) file and output (sto)
-                filename = f'{ifile.stem}'
-                id_tool.setName(filename)
-                id_tool.setOutputGenForceFileName(f"{filename}.sto")
-                id_tool.setResultsDir(f'{self.sto_output}')
+            # inverse dynamics tool
+            id_tool.setStartTime(start)
+            id_tool.setEndTime(end)
+            id_tool.setCoordinatesFileName(f'{trial.resolve()}')
 
-                # external loads file
-                if self.forces_dir:
-                    loads = osim.ExternalLoads(model, self.xml_forces)
-                    if self.prefix:
-                        loads.setDataFileName(
-                            f"{Path(self.forces_dir, ifile.stem.replace(f'{self.prefix}_', '')).resolve()}.sto"
-                        )
-                    else:
-                        loads.setDataFileName(
-                            f"{Path(self.forces_dir, ifile.stem).resolve()}.sto"
-                        )
-                    loads.setExternalLoadsModelKinematicsFileName(f'{ifile.resolve()}')
+            if self.low_pass:
+                id_tool.setLowpassCutoffFrequency(self.low_pass)
 
-                    temp_xml = Path('temp.xml')
-                    loads.printToXML(f'{temp_xml.resolve()}')  # temporary xml file
-                    id_tool.setExternalLoadsFileName(f'{temp_xml}')
+            # set name of input (mot) file and output (sto)
+            filename = f'{trial.stem}'
+            id_tool.setName(filename)
+            id_tool.setOutputGenForceFileName(f"{filename}.sto")
+            id_tool.setResultsDir(f'{self.sto_output}')
 
-                id_tool.printToXML(self.xml_output)
-                id_tool.run()
+            # external loads file
+            if self.forces_dir:
+                loads = osim.ExternalLoads(model, self.xml_forces)
+                if self.prefix:
+                    loads.setDataFileName(
+                        f"{Path(self.forces_dir, trial.stem.replace(f'{self.prefix}_', '')).resolve()}.sto"
+                    )
+                else:
+                    loads.setDataFileName(
+                        f"{Path(self.forces_dir, trial.stem).resolve()}.sto"
+                    )
+                loads.setExternalLoadsModelKinematicsFileName(f'{trial.resolve()}')
 
-                if self.forces_dir:
-                    temp_xml.unlink()  # delete temporary xml file
+                temp_xml = Path(f'{trial.stem}_temp.xml')
+                loads.printToXML(f'{temp_xml.resolve()}')  # temporary xml file
+                id_tool.setExternalLoadsFileName(f'{temp_xml}')
+
+            id_tool.printToXML(self.xml_output)
+            id_tool.run()
+
+            if self.forces_dir:
+                temp_xml.unlink()  # delete temporary xml file

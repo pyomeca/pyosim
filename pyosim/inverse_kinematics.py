@@ -26,6 +26,8 @@ class InverseKinematics:
         Dictionary which contains the starting and ending point in second as values and trial name as keys
     prefix : str, optional
         Optional prefix to put in front of the output filename (typically model name)
+    multi : bool, optional
+        Launch InverseKinematics in multiprocessing if True
 
     Examples
     --------
@@ -55,11 +57,23 @@ class InverseKinematics:
     >>> )
     """
 
-    def __init__(self, model_input, xml_input, xml_output, trc_files, mot_output, onsets=None, prefix=None):
-        self.model = osim.Model(model_input)
+    def __init__(
+            self,
+            model_input,
+            xml_input,
+            xml_output,
+            trc_files,
+            mot_output,
+            onsets=None,
+            prefix=None,
+            multi=False
+    ):
+        self.model_input = model_input
         self.mot_output = mot_output
         self.onsets = onsets
+        self.xml_input = xml_input
         self.xml_output = xml_output
+        self.multi = multi
 
         if prefix:
             self.prefix = prefix
@@ -72,37 +86,51 @@ class InverseKinematics:
         if not isinstance(self.trc_files[0], Path):
             self.trc_files = [Path(i) for i in self.trc_files]
 
+        self.main_loop()
+
+    def main_loop(self):
+        if self.multi:
+            import os
+            from multiprocessing import Pool
+
+            pool = Pool(os.cpu_count())
+            pool.map(self.run_ik_tool, self.trc_files)
+        else:
+            for itrial in self.trc_files:
+                self.run_ik_tool(itrial)
+
+    def run_ik_tool(self, trial):
+        model = osim.Model(self.model_input)
         # initialize inverse kinematic tool from setup file
-        self.ik_tool = osim.InverseKinematicsTool(xml_input)
-        self.ik_tool.setModel(self.model)
+        ik_tool = osim.InverseKinematicsTool(self.xml_input)
+        ik_tool.setModel(model)
 
-        self.run_ik_tool()
+        print(f'\t{trial.stem}')
+        # initialize inverse kinematic tool from setup file
+        ik_tool = osim.InverseKinematicsTool(self.xml_input)
+        ik_tool.setModel(model)
 
-    def run_ik_tool(self):
-        for ifile in self.trc_files:
-            print(f'\t{ifile.stem}')
+        # set name of input (trc) file and output (mot)
+        if self.prefix:
+            filename = f"{self.prefix}_{trial.stem}"
+        else:
+            filename = trial.stem
+        ik_tool.setName(filename)
+        ik_tool.setMarkerDataFileName(f'{trial}')
+        ik_tool.setOutputMotionFileName(f"{Path(self.mot_output) / filename}.mot")
+        ik_tool.setResultsDir(self.mot_output)
 
-            # set name of input (trc) file and output (mot)
-            if self.prefix:
-                filename = f"{self.prefix}_{ifile.stem}"
-            else:
-                filename = ifile.stem
-            self.ik_tool.setName(filename)
-            self.ik_tool.setMarkerDataFileName(f'{ifile}')
-            self.ik_tool.setOutputMotionFileName(f"{Path(self.mot_output) / filename}.mot")
-            self.ik_tool.setResultsDir(self.mot_output)
+        if trial.stem in self.onsets:
+            # set start and end times from configuration file
+            start = self.onsets[trial.stem][0]
+            end = self.onsets[trial.stem][1]
+        else:
+            # use the trc file to get the start and end times
+            m = osim.MarkerData(f'{trial}')
+            start = m.getStartFrameTime()
+            end = m.getLastFrameTime() - 1e-2  # -1e-2 because removing last frame resolves some bug
+        ik_tool.setStartTime(start)
+        ik_tool.setEndTime(end)
 
-            if ifile.stem in self.onsets:
-                # set start and end times from configuration file
-                start = self.onsets[ifile.stem][0]
-                end = self.onsets[ifile.stem][1]
-            else:
-                # use the trc file to get the start and end times
-                m = osim.MarkerData(f'{ifile}')
-                start = m.getStartFrameTime()
-                end = m.getLastFrameTime() - 1e-2  # -1e-2 because removing last frame resolves some bug
-            self.ik_tool.setStartTime(start)
-            self.ik_tool.setEndTime(end)
-
-            self.ik_tool.printToXML(self.xml_output)
-            self.ik_tool.run()
+        ik_tool.printToXML(self.xml_output)
+        ik_tool.run()
