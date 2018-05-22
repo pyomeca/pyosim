@@ -1,16 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-
-Definition of different container in pyosim
-
-"""
-
 from pathlib import Path
 
 import numpy as np
 import opensim as osim
 
-from pyomeca.types import Markers3d
+from pyomeca.obj.markers import Markers3d
 
 
 class Markers3dOsim(Markers3d):
@@ -24,18 +17,18 @@ class Markers3dOsim(Markers3d):
         if obj is None or not isinstance(obj, Markers3dOsim):
             return
 
-    def to_trc(self, file_name):
+    def to_trc(self, filename):
         """
         Write a trc file from a Markers3dOsim
         Parameters
         ----------
-        file_name : string
+        filename : string
             path of the file to write
         """
-        file_name = Path(file_name)
+        filename = Path(filename)
         # Make sure the directory exists, otherwise create it
-        if not file_name.parents[0].is_dir():
-            file_name.parents[0].mkdir()
+        if not filename.parents[0].is_dir():
+            filename.parents[0].mkdir()
 
         # Make sure the metadata are set
         if not self.get_rate:
@@ -56,11 +49,11 @@ class Markers3dOsim(Markers3d):
         time_vector = np.arange(start=0, stop=1 / self.get_rate * self.shape[2], step=1 / self.get_rate)
 
         for iframe in range(self.shape[-1]):
-            a = self.get_frame(iframe)[:-1, ...]
+            a = np.round(self.get_frame(iframe)[:-1, ...], decimals=4)
             row = osim.RowVectorOfVec3(
                 [osim.Vec3(a[0, i], a[1, i], a[2, i]) for i in range(a.shape[-1])]
             )
             table.appendRow(time_vector[iframe], row)
 
         adapter = osim.TRCFileAdapter()
-        adapter.write(table, str(file_name))
+        adapter.write(table, str(filename))
