@@ -1,7 +1,7 @@
 PathFileType	4	(X/Y/Z)	../tests/data/markers.trc
 DataRate	CameraRate	NumFrames	NumMarkers	Units	OrigDataRate	OrigDataStartFrame	OrigNumFrames
 100.0	100.0	580	4	mm	100.0	0	580
-Frame#	Time	boite:gauche_ext			boite:gauche_int			boite:droite_int			boite:droite_ext			
+Frame#	Time	gauche_ext			gauche_int			droite_int			droite_ext			
 		X1	Y1	Z1	X2	Y2	Z2	X3	Y3	Z3	X4	Y4	Z4	
 
 1	0	44.16278839111328	-276.8619384765625	675.6968383789062	32.57229614257812	-243.1404876708984	676.5745239257812	-93.72181701660156	124.7859802246094	674.2787475585938	-105.0027008056641	158.0044555664062	673.8805541992188	
