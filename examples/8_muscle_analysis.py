@@ -6,12 +6,9 @@ from pathlib import Path
 
 from pyosim import Conf
 from pyosim import MuscleAnalysis
+from project_conf import PROJECT_PATH, TEMPLATES_PATH
 
-# path
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
-TEMPLATES_PATH = PROJECT_PATH / '_templates'
-
-model_names = ['wu', 'das']
+model_names = ['wu']  #, 'das']
 
 conf = Conf(project_path=PROJECT_PATH)
 conf.check_confs()
@@ -36,6 +33,7 @@ for iparticipant in participants:
             'xml_actuators': f"{(TEMPLATES_PATH / f'{imodel}_actuators.xml').resolve()}",
             'ext_forces_dir': f"{(PROJECT_PATH / iparticipant / '0_forces').resolve()}",
             'sto_output': f"{(PROJECT_PATH / iparticipant / '4_muscle_analysis').resolve()}",
+            'enforce_analysis': True
         }
 
         MuscleAnalysis(
@@ -45,4 +43,5 @@ for iparticipant in participants:
             low_pass=5,
             remove_empty_files=True,
             multi=True
+
         )

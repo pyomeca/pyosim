@@ -6,14 +6,12 @@ from pathlib import Path
 
 from pyosim import Conf
 from pyosim import Scale
+from project_conf import PROJECT_PATH, WU_MASS_FACTOR, MODELS_PATH, TEMPLATES_PATH
 
 # path
-WU_MASS_FACTOR = 24.385 / 68.2
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
-MODELS_PATH = PROJECT_PATH / '_models'
-TEMPLATES_PATH = PROJECT_PATH / '_templates'
 
-model_names = ['wu', 'das']
+
+model_names = ['wu']  #, 'das']
 
 conf = Conf(project_path=PROJECT_PATH)
 conf.check_confs()
@@ -31,13 +29,15 @@ for iparticipant in participants:
         if imodel == 'wu':
             # mass of the upper limb + torso
             mass = mass * WU_MASS_FACTOR
+            # TODO: mass scaling should be verified
 
         path_kwargs = {
             'model_input': f'{MODELS_PATH / imodel}.osim',
             'model_output': f"{PROJECT_PATH / iparticipant / '_models' / imodel}_scaled.osim",
             'xml_input': f'{TEMPLATES_PATH / imodel}_scaling.xml',
             'xml_output': f"{PROJECT_PATH / iparticipant / '_xml' / imodel}_scaled.xml",
-            'static_path': static_path
+            'static_path': static_path,
+            'model_add': f"{MODELS_PATH}/box.osim"
         }
 
         Scale(

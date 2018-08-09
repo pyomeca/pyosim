@@ -2,28 +2,28 @@
 Example: create a project.
 """
 import shutil
-from pathlib import Path
 
-from pyomeca.gui import FieldsAssignment
+from pyogui import FieldsAssignment
 from pyosim import Conf
 from pyosim import Project
+from project_conf import PROJECT_PATH, DATA_PARENT_PATH, CONF_TEMPLATE, MVC_PARENT_PATH
 
-# path
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
-CONF_TEMPLATE = Path('../tests/_conf.csv')
+ERASE_PREVIOUS_PROJECT = False
 
-# remove project if already exists (you don't need to do this)
-if PROJECT_PATH.is_dir():
-    shutil.rmtree(PROJECT_PATH)
+if ERASE_PREVIOUS_PROJECT:
+    # remove project if already exists (you don't need to do this)
+    if PROJECT_PATH.is_dir():
+        shutil.rmtree(PROJECT_PATH)
 
 # create Project object
 project = Project(path=PROJECT_PATH)
 
-# create project directory
-project.create_project()
+if ERASE_PREVIOUS_PROJECT:
+    # create project directory
+    project.create_project()
 
-# add participants from the template conf file
-shutil.copy(CONF_TEMPLATE, PROJECT_PATH)
+    # add participants from the template conf file
+    shutil.copy(CONF_TEMPLATE, PROJECT_PATH)
 project.update_participants()
 
 # Create a Conf object
@@ -37,9 +37,9 @@ participants = conf.get_participants_to_process()
 d = {}
 for iparticipant in participants:
     pseudo_in_path = iparticipant[0].upper() + iparticipant[1:-1] + iparticipant[-1].upper()
-    trials = f'/media/romain/F/Data/Shoulder/RAW/IRSST_{pseudo_in_path}d/trials'
-    score = f'/media/romain/F/Data/Shoulder/RAW/IRSST_{pseudo_in_path}d/MODEL2'
-    mvc = f'/media/romain/E/Projet_MVC/data/C3D_original_files/irsst_hf/{pseudo_in_path}'
+    trials = f'{DATA_PARENT_PATH}/IRSST_{pseudo_in_path}d/trials'
+    score = f'{DATA_PARENT_PATH}/IRSST_{pseudo_in_path}d/MODEL2'
+    mvc = f'{MVC_PARENT_PATH}/{pseudo_in_path}'
 
     d.update({iparticipant: {'emg': {'data': [trials, mvc]},
                              'analogs': {'data': [trials]},

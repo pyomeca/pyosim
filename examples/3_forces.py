@@ -9,23 +9,21 @@ import numpy as np
 
 from pyosim import Conf
 from pyosim.obj import Analogs3dOsim
+from project_conf import PROJECT_PATH, CALIBRATION_MATRIX
 
 # path
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
-# PROJECT_PATH = Path('/home/romain/Documents/codes/pyosim/Misc/project_sample')
-CALIBRATION_MATRIX = Path('../tests/data/forces_calibration_matrix.csv')
 
 conf = Conf(project_path=PROJECT_PATH)
 conf.check_confs()
+participants = conf.get_participants_to_process()
 
 calibration_matrix = np.genfromtxt(CALIBRATION_MATRIX, delimiter=',')
 params = {
     'low_pass_cutoff': 30,
     'order': 4,
-    'forces_labels': conf.get_conf_field(participant='dapo', field=['analogs', 'targets'])
+    'forces_labels': conf.get_conf_field(participant=participants[0], field=['analogs', 'targets'])
 }
 
-participants = conf.get_participants_to_process()
 
 for iparticipant in participants:
     print(f'\nparticipant: {iparticipant}')
@@ -110,7 +108,7 @@ for iparticipant in participants:
         for (inf, sup) in idx:
             ax.axvline(x=inf, color='g', lw=2, ls='--')
             ax.axvline(x=sup, color='r', lw=2, ls='--')
-        plt.show()
+        # plt.show()
 
         forces.get_labels = params['forces_labels']
         sto_filename = f"{PROJECT_PATH / iparticipant / '0_forces' / itrial.stem}.sto"

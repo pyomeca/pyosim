@@ -6,12 +6,10 @@ from pathlib import Path
 
 from pyosim import Conf
 from pyosim import JointReaction
+from project_conf import PROJECT_PATH, TEMPLATES_PATH
 
-# path
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
-TEMPLATES_PATH = PROJECT_PATH / '_templates'
 
-model_names = ['wu', 'das']
+model_names = ['wu']  #, 'das']
 
 conf = Conf(project_path=PROJECT_PATH)
 conf.check_confs()
@@ -32,11 +30,10 @@ for iparticipant in participants:
             'model_input': f"{(PROJECT_PATH / iparticipant / '_models' / imodel).resolve()}_scaled_markers.osim",
             'xml_input': f"{(TEMPLATES_PATH / imodel).resolve()}_jr.xml",
             'xml_output': f"{(PROJECT_PATH / iparticipant / '_xml' / imodel).resolve()}_jr.xml",
-            'xml_forces': f"{(TEMPLATES_PATH / 'forces_sensor.xml').resolve()}",
             'xml_actuators': f"{(TEMPLATES_PATH / f'{imodel}_actuators.xml').resolve()}",
-            'ext_forces_dir': f"{(PROJECT_PATH / iparticipant / '0_forces').resolve()}",
             'muscle_forces_dir': f"{(PROJECT_PATH / iparticipant / '3_static_optimization').resolve()}",
             'sto_output': f"{(PROJECT_PATH / iparticipant / '5_joint_reaction_force').resolve()}",
+            'enforce_analysis': True
         }
 
         JointReaction(

@@ -11,22 +11,22 @@ import numpy as np
 from pyomeca.obj.analogs import MVC
 from pyosim import Conf
 from pyosim.obj import Analogs3dOsim
+from project_conf import PROJECT_PATH
 
 # path
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
 MULTIPROC = True
 
 conf = Conf(project_path=PROJECT_PATH)
+participants = conf.get_participants_to_process()
 
 params = {
     'band_pass_cutoff': [10, 425],
     'low_pass_cutoff': 5,
     'order': 4,
     'outlier': 5,
-    'emg_labels': conf.get_conf_field(participant='dapo', field=['emg', 'targets'])
+    'emg_labels': conf.get_conf_field(participant=participants[0], field=['emg', 'targets'])
 }
 
-participants = conf.get_participants_to_process()
 
 for iparticipant in participants:
     print(f'\nparticipant: {iparticipant}')

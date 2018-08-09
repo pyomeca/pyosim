@@ -8,15 +8,13 @@ import numpy as np
 
 from pyosim import Conf
 from pyosim.obj import Markers3dOsim
-
-# path
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
+from project_conf import PROJECT_PATH
 
 conf = Conf(project_path=PROJECT_PATH)
-
-markers_labels = conf.get_conf_field(participant='dapo', field=['markers', 'targets'])
-
 participants = conf.get_participants_to_process()
+
+markers_labels = conf.get_conf_field(participant=participants[0], field=['markers', 'targets'])
+
 
 for iparticipant in participants:
     print(f'\nparticipant: {iparticipant}')

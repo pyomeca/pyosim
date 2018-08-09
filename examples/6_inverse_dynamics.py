@@ -6,12 +6,10 @@ from pathlib import Path
 
 from pyosim import Conf
 from pyosim import InverseDynamics
+from project_conf import PROJECT_PATH, TEMPLATES_PATH
 
-# path
-PROJECT_PATH = Path('/home/romain/Dropbox/pyosim_irsst')
-TEMPLATES_PATH = PROJECT_PATH / '_templates'
 
-model_names = ['wu', 'das']
+model_names = ['wu']  #, 'das']
 
 conf = Conf(project_path=PROJECT_PATH)
 conf.check_confs()
