@@ -1,5 +1,5 @@
 import sys
-#import _0_project
+import _0_project
 # import _1_markers
 # import _2_emg
 # import _3_forces
@@ -13,10 +13,11 @@ import sys
 
 
 def main(participant_to_do):
-    print("coucou " + participant_to_do)
-    # if not _0_project.main(specific_participant=participant_to_do, erase_previous_project=True):
-    #     print("Program failed in _0_project")
-    #     exit(1)
+    if not _0_project.main(specific_participant=participant_to_do, erase_previous_project=False):
+        print("Program failed in _0_project")
+        exit(1)
+
 
 if __name__ == "__main__":
-   main(sys.argv[1])
+    # main(sys.argv[1])
+    main(2)
