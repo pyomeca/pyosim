@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OpenSimDocument Version="30000">
+    <ForceSet name="DAS3-append">
+        <defaults>
+            <CoordinateActuator name="default">
+                <!--Flag indicating whether the force is disabled or not. Disabled means that the force is not active in subsequent dynamics realizations.-->
+                <isDisabled>false</isDisabled>
+                <!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+                <min_control>-Inf</min_control>
+                <!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+                <max_control>Inf</max_control>
+                <!--Name of the generalized coordinate to which the actuator applies.-->
+                <coordinate/>
+                <!--The maximum generalized force produced by this actuator.-->
+                <optimal_force>2</optimal_force>
+            </CoordinateActuator>
+
+            <PointActuator name="default">
+                <!--Flag indicating whether the force is disabled or not. Disabled means that the force is not active in subsequent dynamics realizations.-->
+                <isDisabled>false</isDisabled>
+                <!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+                <min_control>-Inf</min_control>
+                <!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+                <max_control>Inf</max_control>
+                <!--Name of Body to which this actuator is applied.-->
+                <body/>
+                <!--Location of application point; in body frame unless point_is_global=true-->
+                <point/>
+                <!--Interpret point in Ground frame if true; otherwise, body frame.-->
+                <point_is_global>false</point_is_global>
+                <!--Force application direction; in body frame unless force_is_global=true.-->
+                <direction/>
+                <!--Interpret direction in Ground frame if true; otherwise, body frame.-->
+                <force_is_global>false</force_is_global>
+                <!--The maximum force produced by this actuator when fully activated.-->
+                <optimal_force>5</optimal_force>
+            </PointActuator>
+
+            <TorqueActuator name="default">
+                <!--Flag indicating whether the force is disabled or not. Disabled means that the force is not active in subsequent dynamics realizations.-->
+                <isDisabled>false</isDisabled>
+                <!--Minimum allowed value for control signal. Used primarily when solving for control values.-->
+                <min_control>-Inf</min_control>
+                <!--Maximum allowed value for control signal. Used primarily when solving for control values.-->
+                <max_control>Inf</max_control>
+                <!--Name of Body to which the torque actuator is applied.-->
+                <bodyA/>
+                <!--Name of Body to which the equal and opposite torque is applied.-->
+                <bodyB/>
+                <!--Interpret axis in Ground frame if true; otherwise, body A s frame.-->
+                <torque_is_global>false</torque_is_global>
+                <!--Fixed direction about which torque is applied, in Ground or body A frame depending on torque_is_global property.-->
+                <axis/>
+                <!--The maximum torque produced by this actuator when fully activated.-->
+                <optimal_force>5</optimal_force>
+            </TorqueActuator>
+        </defaults>
+
+
+        <objects>
+            <!-- Box actuators -->
+            <CoordinateActuator name="box_Rx">
+                <coordinate>box_rotX</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="box_Ry">
+                <coordinate>box_rotY</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="box_Rz">
+                <coordinate>box_rotZ</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="box_Tx">
+                <coordinate>box_transX</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="box_Ty">
+                <coordinate>box_transY</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="box_Tz">
+                <coordinate>box_transZ</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+
+            <!-- Thorax actuator -->
+            <CoordinateActuator name="Th_rotX">
+                <coordinate>Th_rotX</coordinate>
+                <optimal_force>300</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="Th_rotY">
+                <coordinate>Th_rotY</coordinate>
+                <optimal_force>300</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="Th_rotZ">
+                <coordinate>Th_rotZ</coordinate>
+                <optimal_force>300</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="Th_transX">
+                <coordinate>Th_transX</coordinate>
+                <optimal_force>1000</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="Th_transY">
+                <coordinate>Th_transY</coordinate>
+                <optimal_force>1000</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="Th_transZ">
+                <coordinate>Th_transZ</coordinate>
+                <optimal_force>1000</optimal_force>
+            </CoordinateActuator>
+
+            <!-- Prosupination actuator 	-->
+            <CoordinateActuator name="PS_y">
+                <isDisabled>false</isDisabled>
+                <coordinate>PS_y</coordinate>
+                <optimal_force>10</optimal_force>
+            </CoordinateActuator>
+
+            <!-- Hand actuator 	-->
+            <CoordinateActuator name="wrist_dev_r">
+                <coordinate>wrist_dev_r</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+            <CoordinateActuator name="wrist_flex_r">
+                <coordinate>wrist_flex_r</coordinate>
+                <optimal_force>100</optimal_force>
+            </CoordinateActuator>
+
+
+            <!-- Clavicle residual actuator -->
+            <CoordinateActuator name="SC_x">
+                <coordinate>SC_x</coordinate>
+            </CoordinateActuator>
+            <CoordinateActuator name="SC_y">
+                <coordinate>SC_y</coordinate>
+            </CoordinateActuator>
+            <CoordinateActuator name="SC_z">
+                <coordinate>SC_z</coordinate>
+            </CoordinateActuator>
+
+            <!-- Scap residual actuator	-->
+            <CoordinateActuator name="AC_x">
+                <coordinate>AC_x</coordinate>
+            </CoordinateActuator>
+            <CoordinateActuator name="AC_y">
+                <coordinate>AC_y</coordinate>
+            </CoordinateActuator>
+            <CoordinateActuator name="AC_z">
+                <coordinate>AC_z</coordinate>
+            </CoordinateActuator>
+
+            <!-- Humerus residual actuator -->
+            <CoordinateActuator name="GH_x">
+                <coordinate>GH_x</coordinate>
+            </CoordinateActuator>
+            <CoordinateActuator name="GH_y">
+                <coordinate>GH_y</coordinate>
+            </CoordinateActuator>
+            <CoordinateActuator name="GH_z">
+                <coordinate>GH_z</coordinate>
+            </CoordinateActuator>
+
+            <!-- Forearm actuator 	-->
+            <CoordinateActuator name="EL_x">
+                <coordinate>EL_x</coordinate>
+            </CoordinateActuator>
+
+        </objects>
+        <groups/>
+    </ForceSet>
+</OpenSimDocument>

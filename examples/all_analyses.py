@@ -12,11 +12,16 @@ import _0_project
 #
 
 
-def main(participant_to_do):
+def main(run_0_only, participant_to_do):
     participant_to_do = int(participant_to_do)
-    _0_project.main(specific_participant=participant_to_do, erase_previous_project=True)
+    run_0_only = bool(run_0_only)
+
+    if run_0_only:
+        _0_project.main(specific_participant=participant_to_do, erase_previous_project=True)
+    else:
+        print("coucou")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[1])
 
