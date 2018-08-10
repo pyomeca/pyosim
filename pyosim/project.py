@@ -59,7 +59,7 @@ class Project:
             f'\t3. Fill the conf file: {self.path}/_conf.csv\n'
         )
 
-    def update_participants(self):
+    def update_participants(self, specific_participant=-1):
         """add participants in project.
 
         1. Read the project configuration file
@@ -86,10 +86,11 @@ class Project:
         for index, irow in conf.iterrows():
             if irow['process'] and not list(self.path.glob(f"{irow['participant']}")):
                 count += 1
-                for idir in participant_dirs:
-                    (self.path / irow['participant'] / idir).mkdir(parents=True)
+                if specific_participant < 0 or index == specific_participant:
+                    for idir in participant_dirs:
+                        (self.path / irow['participant'] / idir).mkdir(parents=True)
 
-                # create conf file
-                irow.to_json(self.path / irow['participant'] / '_conf.json')
+                    # create conf file
+                    irow.to_json(self.path / irow['participant'] / '_conf.json')
 
         print(f'{count} participants added\n')
