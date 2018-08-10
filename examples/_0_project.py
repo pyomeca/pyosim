@@ -60,14 +60,14 @@ def main(specific_participant=-1, erase_previous_project=False):
                         'boite_avant_gauche', 'boite_avant_droit', 'boite_arriere_droit', 'boite_arriere_gauche']
         }
 
-        for ikind, itarget in targets.items():
-            for iparticipant in participants:
-                fields = FieldsAssignment(
-                    directory=conf.get_conf_field(iparticipant, field=[ikind, 'data']),
-                    targets=itarget,
-                    kind=ikind
-                )
-                conf.add_conf_field({iparticipant: fields.output})
+        # for ikind, itarget in targets.items():
+        #     for iparticipant in participants:
+        #         fields = FieldsAssignment(
+        #             directory=conf.get_conf_field(iparticipant, field=[ikind, 'data']),
+        #             targets=itarget,
+        #             kind=ikind
+        #         )
+        #         conf.add_conf_field({iparticipant: fields.output})
         return True
 
     except:
