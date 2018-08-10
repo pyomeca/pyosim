@@ -68,6 +68,7 @@ def main(specific_participant=-1, erase_previous_project=False):
         #             kind=ikind
         #         )
         #         conf.add_conf_field({iparticipant: fields.output})
+        print("coucou")
         return True
 
     except:
