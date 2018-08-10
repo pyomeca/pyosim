@@ -13,9 +13,7 @@ import _0_project
 
 
 def main(participant_to_do):
-    if not _0_project.main(specific_participant=participant_to_do, erase_previous_project=False):
-        print("Program failed in _0_project")
-        exit(1)
+    _0_project.main(specific_participant=participant_to_do, erase_previous_project=False)
 
 
 if __name__ == "__main__":
