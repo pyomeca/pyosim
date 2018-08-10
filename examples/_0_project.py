@@ -3,7 +3,7 @@ Example: create a project.
 """
 import shutil
 
-from pyogui import FieldsAssignment
+#from pyogui import FieldsAssignment
 from pyosim import Conf
 from pyosim import Project
 from project_conf import PROJECT_PATH, DATA_PARENT_PATH, CONF_TEMPLATE, MVC_PARENT_PATH
