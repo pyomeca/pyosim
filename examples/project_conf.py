@@ -3,7 +3,7 @@ from pathlib import Path
 
 # path
 PROJECT_PATH = Path('results')
-CONF_TEMPLATE = Path('_conf.csv')
+CONF_TEMPLATE = Path('../tests/_conf.csv')
 
 LOCAL_DATA_PARENT_PATH = Path('/home/laboratoire/mnt/F/Data/Shoulder/RAW')
 DATA_PARENT_PATH = Path('/home/ubuntu/data/RAW')
