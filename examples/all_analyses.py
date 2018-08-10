@@ -1,3 +1,4 @@
+import sys
 #import _0_project
 # import _1_markers
 # import _2_emg
@@ -17,3 +18,5 @@ def main(participant_to_do):
     #     print("Program failed in _0_project")
     #     exit(1)
 
+if __name__ == "__main__":
+   main(sys.argv[0])
