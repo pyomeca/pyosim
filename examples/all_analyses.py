@@ -13,7 +13,7 @@ import _0_project
 
 
 def main(participant_to_do):
-    _0_project.main(specific_participant=participant_to_do, erase_previous_project=False)
+    _0_project.main(specific_participant=participant_to_do, erase_previous_project=True)
 
 
 if __name__ == "__main__":
