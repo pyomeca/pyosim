@@ -19,4 +19,4 @@ def main(participant_to_do):
     #     exit(1)
 
 if __name__ == "__main__":
-   main(sys.argv[0])
+   main(sys.argv[1])
