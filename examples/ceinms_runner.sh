@@ -5,7 +5,7 @@
 
 ## SETUP ##
 
-debug=${10}
+debug=${11}
 if [ -z "$debug" ]
 then
     debug=false
@@ -39,6 +39,7 @@ distant_mvc_folder_address=$distant_user_name@$hostname:$distant_mvc_folder
 
 # Get the script to run
 running_python_script=$9
+log_file=${10}
 
 # Print if needed
 if [ $debug = true ] ;
@@ -54,6 +55,7 @@ then
     echo "distant_score_folder_address = $distant_score_folder_address"
     echo "distant_mvc_folder_address = $distant_mvc_folder_address"
     echo "running_python_script = $running_python_script"
+    echo "log_file = $log_file"
     echo "Done"
     echo ""
     exit 1
@@ -86,18 +88,30 @@ echo "Executing the analysis.."
 cp -r _models results/
 cp -r _templates results/
 scp -r -i $pem_file results $distant_user_name@$hostname:$running_python_script
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _1_markers.py"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _2_emg.py"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _3_forces.py"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _1_markers.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _2_emg.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _3_forces.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _4_scaling.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _5_inverse_kinematics.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _6_inverse_dynamics.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _7_static_optimization.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _8_muscle_analysis.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _9_joint_reaction.py >> $log_file"
 echo "Done"
 echo ""
 
-## Delete distant data
-#echo "Deleting distant data and mvc.."
-#ssh -i $pem_file $distant_user_name@$hostname "rm -rf $distant_data_folder"
-#ssh -i $pem_file $distant_user_name@$hostname "rm -rf $distant_mvc_folder"
-#echo "Done"
-#echo ""
+# Copy back the results
+mkdir final_results
+scp -r -i $pem_file $distant_user_name@$hostname:${running_python_script}results final_results
+
+# Delete distant data
+echo "Deleting distant data and mvc.."
+ssh -i $pem_file $distant_user_name@$hostname "rm -rf $distant_data_folder"
+ssh -i $pem_file $distant_user_name@$hostname "rm -rf $distant_score_folder"
+ssh -i $pem_file $distant_user_name@$hostname "rm -rf $distant_mvc_folder"
+ssh -i $pem_file $distant_user_name@$hostname "rm -rf $distant_user_name@$hostname:${running_python_script}results"
+echo "Done"
+echo ""
 
 
 
