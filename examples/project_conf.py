@@ -2,6 +2,7 @@
 from pathlib import Path
 
 # path
+BASE_PROJECT_DISTANT='/home/ubuntu/pyosim/examples/'
 PROJECT_PATH = Path('results')
 CONF_TEMPLATE = Path('../tests/_conf.csv')
 
