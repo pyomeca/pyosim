@@ -88,15 +88,15 @@ echo "Executing the analysis.."
 cp -r _models results/
 cp -r _templates results/
 scp -r -i $pem_file results $distant_user_name@$hostname:$running_python_script
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _1_markers.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _2_emg.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _3_forces.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _4_scaling.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _5_inverse_kinematics.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _6_inverse_dynamics.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _7_static_optimization.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _8_muscle_analysis.py >> $log_file"
-ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _9_joint_reaction.py >> $log_file"
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _1_markers.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _2_emg.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _3_forces.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _4_scaling.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _5_inverse_kinematics.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _6_inverse_dynamics.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _7_static_optimization.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _8_muscle_analysis.py" >> $log_file
+ssh -X -i $pem_file $distant_user_name@$hostname "cd $running_python_script; /home/ubuntu/miniconda3/envs/CEINMS/bin/python3 _9_joint_reaction.py" >> $log_file
 echo "Done"
 echo ""
 
