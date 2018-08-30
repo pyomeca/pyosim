@@ -47,6 +47,7 @@ class Markers3dOsim(Markers3d):
         table.addTableMetaDataString('Units', self.get_unit)
 
         time_vector = np.arange(start=0, stop=1 / self.get_rate * self.shape[2], step=1 / self.get_rate)
+        self[self == 0] = np.NaN
 
         for iframe in range(self.shape[-1]):
             a = np.round(self.get_frame(iframe)[:-1, ...], decimals=4)

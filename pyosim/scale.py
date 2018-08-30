@@ -68,10 +68,11 @@ class Scale:
     """
 
     def __init__(self, model_input, model_output, xml_input, xml_output, static_path, mass=-1, height=-1, age=-1,
-                 remove_unused=True):
+                 remove_unused=True, model_add=None):
         self.model = osim.Model(model_input)
         self.model_output = model_output
         self.model__with_markers_output = model_output.replace('.osim', '_markers.osim')
+        self.model_add = model_add
         self.static_path = static_path
         self.xml_output = xml_output
 
@@ -85,6 +86,8 @@ class Scale:
 
         self.run_model_scaler()
         self.run_marker_placer()
+        if model_add:
+            self.combine_models()
 
         if not remove_unused:
             self.add_unused_markers()
@@ -125,13 +128,13 @@ class Scale:
         model_scaler.setTimeRange(self.time_range)
 
         # Indicating whether or not to preserve relative mass between segments
-        model_scaler.setPreserveMassDist(True)
+        model_scaler.setPreserveMassDist(False)
 
         # Name of model file (.osim) to write when done scaling
         model_scaler.setOutputModelFileName(self.model_output)
 
         # Filename to write scale factors that were applied to the unscaled model (optional)
-        self.scale_tool.getModelScaler().setOutputScaleFileName(self.xml_output.replace('.xml', '_scaling_factor.xml'))
+        model_scaler.setOutputScaleFileName(self.xml_output.replace('.xml', '_scaling_factor.xml'))
 
         model_scaler.processModel(self.model)
 
@@ -175,3 +178,45 @@ class Scale:
             without_unused.addMarker(m)
 
         without_unused.printToXML(self.model__with_markers_output)
+
+    def combine_models(self):
+        # Open the models
+        osim_base = osim.Model(self.model_output)
+        osim_to_add = osim.Model(self.model_add)
+
+
+        bodies = osim_to_add.getBodySet()
+        joints = osim_to_add.getJointSet()
+        controls = osim_to_add.getControllerSet()
+        constraints = osim_to_add.getConstraintSet()
+        markers = osim_to_add.getMarkerSet()
+
+        print('** ADD BODIES')
+        for body in bodies:
+            print('\t' + body.getName())
+            osim_base.addBody(body.clone())
+
+        print('** ADD JOINTS')
+        for joint in joints:
+            print('\t' + joint.getName())
+            osim_base.addJoint(joint.clone())
+
+        print('** ADD CONTROLS')
+        for control in controls:
+            print('\t' + control.getName())
+            osim_base.addControl(control.clone())
+
+        print('** ADD CONSTRAINTS')
+        for constraint in constraints:
+            print('\t' + constraint.getName())
+            osim_base.addConstraint(constraint.clone())
+
+        print('** ADD MARKERS')
+        for marker in markers:
+            print('\t' + marker.getName())
+            osim_base.addMarker(marker.clone())
+
+        osim_base.initSystem()
+
+        osim_base.printToXML(self.model__with_markers_output)
+        print(self.model_add + " added to " + self.model__with_markers_output)

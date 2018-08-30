@@ -93,7 +93,7 @@ class InverseKinematics:
             import os
             from multiprocessing import Pool
 
-            pool = Pool(os.cpu_count())
+            pool = Pool(os.cpu_count()-1)
             pool.map(self.run_ik_tool, self.trc_files)
         else:
             for itrial in self.trc_files:

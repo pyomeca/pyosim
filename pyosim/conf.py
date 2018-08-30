@@ -61,12 +61,15 @@ class Conf:
         """
         return self.project_conf[col]
 
-    def check_confs(self):
+    def check_confs(self, specific_participant=-1):
         """check if all participants have a configuration file and update it in the project's configuration file"""
 
         for index, irow in self.project_conf.iterrows():
             if not irow['process']:
                 break
+            if specific_participant >= 0 and index != specific_participant:
+                self.project_conf.loc[index, "process"] = 0
+                continue
             default = (self.project_path / irow['participant'] / '_conf.json')
             is_nan = irow['conf_file'] != irow['conf_file']
             if not is_nan and Path(irow['conf_file']).is_file():

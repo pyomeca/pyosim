@@ -4,6 +4,8 @@ Used in static optimization, muscle analysis and joint reaction analysis.
 """
 from pathlib import Path
 
+import os, glob
+
 import opensim as osim
 
 
@@ -87,7 +89,8 @@ class AnalyzeTool:
             prefix=None,
             low_pass=None,
             remove_empty_files=False,
-            multi=False
+            multi=False,
+            enforce_analysis=False
     ):
         self.model_input = model_input
         self.xml_input = xml_input
@@ -101,6 +104,7 @@ class AnalyzeTool:
         self.low_pass = low_pass
         self.remove_empty_files = remove_empty_files
         self.multi = multi
+        self.enforce_analysis = enforce_analysis
 
         if not isinstance(mot_files, list):
             self.mot_files = [mot_files]
@@ -171,9 +175,9 @@ class AnalyzeTool:
             elif current_class == 'JointReaction':
                 # construct joint reaction analysis
                 analysis = osim.JointReaction(model)
-                # analysis.setForcesFileName(
-                #     f"{Path(self.muscle_forces_dir, trial.stem).resolve()}_StaticOptimization_force.sto"
-                # )
+                analysis.setForcesFileName(
+                    f"{Path(self.muscle_forces_dir, trial.stem).resolve()}_StaticOptimization_force.sto"
+                )
 
                 joint = osim.ArrayStr()
                 joint.append(params['joint_names'].replace(' ', ''))
@@ -216,11 +220,16 @@ class AnalyzeTool:
                 analyze_tool.setLowpassCutoffFrequency(self.low_pass)
 
             analyze_tool.setCoordinatesFileName(f'{trial.resolve()}')
-            analyze_tool.setExternalLoadsFileName(f'{temp_xml}')
+            if self.xml_forces:
+                analyze_tool.setExternalLoadsFileName(f'{temp_xml}')
             analyze_tool.setLoadModelAndInput(True)
             analyze_tool.setResultsDir(f'{self.sto_output}')
 
-            analyze_tool.run()
+            files_name = glob.glob(os.path.join(self.sto_output,analyze_tool.getName()+'*'))
+            if self.enforce_analysis or len(files_name) == 0:
+                analyze_tool.run()
+            else:
+                print(analyze_tool.getName() + ' not reprocessed')
 
             if self.xml_forces:
                 temp_xml.unlink()  # delete temporary xml file
@@ -244,7 +253,7 @@ class AnalyzeTool:
         out = {}
         for t in root.findall(f'.//{node}/*'):
             if t.text == 'true' or t.text == 'false':
-                out.update({t.tag: bool(t.text)})
+                out.update({t.tag: t.text == 'true'})
             elif isfloat(t.text):
                 out.update({t.tag: float(t.text)})
             else:

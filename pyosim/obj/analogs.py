@@ -39,11 +39,11 @@ class Analogs3dOsim(Analogs3d):
         if metadata:
             for key, value in metadata.items():
                 table.addTableMetaDataString(key, str(value))
-        if 'nColumns' not in metadata.keys():
+            if 'nColumns' not in metadata:
+                table.addTableMetaDataString('nColumns', str(self.shape[1]))
+        else:
             table.addTableMetaDataString('nColumns', str(self.shape[1]))
         table.addTableMetaDataString('nRows', str(self.shape[-1]))
-        if 'nColumns' not in metadata.keys():
-            table.addTableMetaDataString('nColumns', str(self.shape[1]))
 
         time_vector = np.arange(start=0, stop=1 / self.get_rate * self.shape[2], step=1 / self.get_rate)
 
