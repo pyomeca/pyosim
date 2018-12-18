@@ -4,7 +4,7 @@
 # GLOBALS                                                                       #
 #################################################################################
 
-REPO_NAME = pyomeca
+REPO_NAME = pyosim
 EXCLUDES_LINT = --exclude=bin/,src/rebuydsutils/,docs/conf.py
 EXCLUDES_PYTEST = --ignore src/rebuydsutils
 SHELL=/bin/bash
@@ -35,7 +35,7 @@ test:
 
 ## Run coverage test on the project
 cover:
-	$(call execute_in_env, python -m pytest --color=yes --cov=pyomeca tests $(EXCLUDES_PYTEST))
+	$(call execute_in_env, python -m pytest --color=yes --cov=pyosim tests $(EXCLUDES_PYTEST))
 
 ## Delete all compiled Python files
 clean:

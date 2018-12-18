@@ -11,7 +11,7 @@ setup(
     name='pyosim',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description="Pyomeca is a python library allowing to carry out a complete biomechanical analysis; in a simple, logical and concise way",
+    description="Pyosim is an interface between OpenSim and the Pyomeca library",
     author="Romain Martinez",
     author_email='martinez.staps@gmail.com',
     url='https://github.com/pyomeca/pyomeca',
@@ -21,5 +21,6 @@ setup(
     keywords='pyosim',
     classifiers=[
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ]
 )
