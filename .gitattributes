@@ -1,1 +1,2 @@
 pyomeca/_version.py export-subst
+pyosim/_version.py export-subst
