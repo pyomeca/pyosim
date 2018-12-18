@@ -1,0 +1,2 @@
+include versioneer.py
+include pyosim/_version.py

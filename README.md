@@ -4,10 +4,6 @@
 
 > Pyosim is a python library building on top of [pyomeca](https://github.com/pyomeca/pyomeca) allowing you to batch process multiple musculoskeletal analysis performed by the OpenSim software.
 
-## Pyosim documentation
-
-See pyomeca's [documentation site]() (under construction and not usable yet), as well as pyomeca's [tutorial notebooks](https://github.com/pyomeca/tutorials).
-
 ## Example
 
 You can find some examples in the [`examples`](https://github.com/pyomeca/pyosim/tree/master/examples) folder.
