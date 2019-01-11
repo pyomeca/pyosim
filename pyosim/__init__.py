@@ -8,6 +8,7 @@ from .analyse_tool import *
 from .static_optimization import *
 from .muscle_analysis import *
 from .joint_reaction import *
+from .obj import *
 
 __author__ = "Romain Martinez"
 __version__ = "0.1.0"
