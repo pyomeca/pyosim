@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import opensim as osim
 
-from pyomeca.obj.markers import Markers3d
+from pyomeca import Markers3d
 
 
 class Markers3dOsim(Markers3d):
