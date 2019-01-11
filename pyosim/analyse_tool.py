@@ -171,9 +171,9 @@ class AnalyzeTool:
             elif current_class == 'JointReaction':
                 # construct joint reaction analysis
                 analysis = osim.JointReaction(model)
-                # analysis.setForcesFileName(
-                #     f"{Path(self.muscle_forces_dir, trial.stem).resolve()}_StaticOptimization_force.sto"
-                # )
+                analysis.setForcesFileName(
+                    f"{Path(self.muscle_forces_dir, trial.stem).resolve()}_StaticOptimization_force.sto"
+                )
 
                 joint = osim.ArrayStr()
                 joint.append(params['joint_names'].replace(' ', ''))
@@ -216,7 +216,8 @@ class AnalyzeTool:
                 analyze_tool.setLowpassCutoffFrequency(self.low_pass)
 
             analyze_tool.setCoordinatesFileName(f'{trial.resolve()}')
-            analyze_tool.setExternalLoadsFileName(f'{temp_xml}')
+            if self.xml_forces:
+                analyze_tool.setExternalLoadsFileName(f'{temp_xml}')
             analyze_tool.setLoadModelAndInput(True)
             analyze_tool.setResultsDir(f'{self.sto_output}')
 
@@ -244,7 +245,7 @@ class AnalyzeTool:
         out = {}
         for t in root.findall(f'.//{node}/*'):
             if t.text == 'true' or t.text == 'false':
-                out.update({t.tag: bool(t.text)})
+                out.update({t.tag: t.text == 'true'})
             elif isfloat(t.text):
                 out.update({t.tag: float(t.text)})
             else:
