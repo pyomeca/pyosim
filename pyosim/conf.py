@@ -66,7 +66,7 @@ class Conf:
 
         for index, irow in self.project_conf.iterrows():
             if not irow['process']:
-                break
+                continue
             default = (self.project_path / irow['participant'] / '_conf.json')
             is_nan = irow['conf_file'] != irow['conf_file']
             if not is_nan and Path(irow['conf_file']).is_file():
