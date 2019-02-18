@@ -3,7 +3,6 @@ name: pyosim
 channels:
   - defaults
   - conda-forge
-  - kzts
   - pyomeca
 dependencies:
   - python
