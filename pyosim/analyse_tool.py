@@ -141,7 +141,7 @@ class AnalyzeTool:
 
             # prepare external forces xml file
             if self.xml_forces:
-                external_loads = osim.ExternalLoads(model, self.xml_forces)
+                external_loads = osim.ExternalLoads(self.xml_forces, True)
                 if self.prefix:
                     external_loads.setDataFileName(
                         f"{Path(self.ext_forces_dir, trial.stem.replace(f'{self.prefix}_', '')).resolve()}.sto"
