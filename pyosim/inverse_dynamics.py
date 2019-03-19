@@ -141,7 +141,7 @@ class InverseDynamics:
 
             # external loads file
             if self.forces_dir:
-                loads = osim.ExternalLoads(model, self.xml_forces)
+                loads = osim.ExternalLoads(self.xml_forces, True)
                 if self.prefix:
                     loads.setDataFileName(
                         f"{Path(self.forces_dir, trial.stem.replace(f'{self.prefix}_', '')).resolve()}.sto"
