@@ -96,7 +96,7 @@ class Scale:
         # Tell scale tool to use the loaded model
         self.scale_tool.getGenericModelMaker().setModelFileName(model_input)
 
-        self.run_model_scaler()
+        self.run_model_scaler(mass)
         self.run_marker_placer()
 
         if add_model:
@@ -130,7 +130,7 @@ class Scale:
         self.scale_tool.setSubjectHeight(height)
         self.scale_tool.setSubjectAge(age)
 
-    def run_model_scaler(self):
+    def run_model_scaler(self, mass):
         model_scaler = self.scale_tool.getModelScaler()
         # Whether or not to use the model scaler during scale
         model_scaler.setApply(True)
@@ -151,7 +151,7 @@ class Scale:
             self.xml_output.replace(".xml", "_scaling_factor.xml")
         )
 
-        model_scaler.processModel(self.model, "", self.mass)
+        model_scaler.processModel(self.model, "", mass)
 
     def run_marker_placer(self):
         # load a scaled model
