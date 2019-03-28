@@ -141,7 +141,7 @@ class Scale:
         model_scaler.setTimeRange(self.time_range)
 
         # Indicating whether or not to preserve relative mass between segments
-        model_scaler.setPreserveMassDist(False)
+        model_scaler.setPreserveMassDist(True)
 
         # Name of model file (.osim) to write when done scaling
         model_scaler.setOutputModelFileName(self.model_output)
@@ -151,7 +151,7 @@ class Scale:
             self.xml_output.replace(".xml", "_scaling_factor.xml")
         )
 
-        model_scaler.processModel(self.model)
+        model_scaler.processModel(self.model, "", self.mass)
 
     def run_marker_placer(self):
         # load a scaled model
