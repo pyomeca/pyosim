@@ -34,7 +34,6 @@ class Conf:
         else:
             self.project_conf = pd.read_csv(self.conf_path)
             print('Configuration file loaded')
-        print('\n')
 
     def get_participants_to_process(self):
         """
@@ -61,7 +60,7 @@ class Conf:
         """
         return self.project_conf[col]
 
-    def check_confs(self):
+    def check_confs(self, verbose=False):
         """check if all participants have a configuration file and update it in the project's configuration file"""
 
         for index, irow in self.project_conf.iterrows():
@@ -70,17 +69,18 @@ class Conf:
             default = (self.project_path / irow['participant'] / '_conf.json')
             is_nan = irow['conf_file'] != irow['conf_file']
             if not is_nan and Path(irow['conf_file']).is_file():
-                print(f'{irow["participant"]}: checked')
+                if verbose:
+                    print(f'{irow["participant"]}: checked')
             if (is_nan and default.is_file()) or default.is_file():  # check if nan or file exist in default location
                 conf_file = str(default.resolve())
                 self.project_conf.loc[index, 'conf_file'] = conf_file
                 self.update_conf(conf_file, {'conf_file': conf_file})
-                print(f'{irow["participant"]}: updated in project conf')
+                if verbose:
+                    print(f'{irow["participant"]}: updated in project conf')
             else:
                 raise ValueError(f'{irow["participant"]} does not have a configuration file in {irow["conf_file"]}')
 
         # update conf file
-        print('\n')
         self.project_conf.to_csv(self.conf_path, index=False)
 
     @classmethod
