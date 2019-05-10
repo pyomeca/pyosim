@@ -88,6 +88,7 @@ class AnalyzeTool:
         low_pass=None,
         remove_empty_files=False,
         multi=False,
+        contains=None,
     ):
         self.model_input = model_input
         self.xml_input = xml_input
@@ -101,6 +102,7 @@ class AnalyzeTool:
         self.low_pass = low_pass
         self.remove_empty_files = remove_empty_files
         self.multi = multi
+        self.contains = contains
 
         if not isinstance(mot_files, list):
             self.mot_files = [mot_files]
@@ -238,6 +240,9 @@ class AnalyzeTool:
             if self.remove_empty_files:
                 self._remove_empty_files(directory=self.sto_output)
 
+            if self.contains:
+                self._subset_output(directory=self.sto_output, contains=self.contains)
+
     @staticmethod
     def parse_analyze_set_xml(filename, node):
         from xml.etree import ElementTree
@@ -278,6 +283,23 @@ class AnalyzeTool:
             if ifile.stat().st_size < threshold:
                 ifile.unlink()
 
+    @staticmethod
+    def _subset_output(directory, contains):
+        """
+        Keep only files that contains `contains` string
+
+        Parameters
+        ----------
+        directory : str, Path
+            directory
+        contains : str
+            string
+        """
+        for ifile in Path(directory).iterdir():
+            if contains not in ifile.stem:
+                ifile.unlink()
+
     @classmethod
     def get_class_name(cls):
         return cls.__name__
+
