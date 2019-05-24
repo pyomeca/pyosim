@@ -16,7 +16,7 @@ First, install [miniconda](https://conda.io/miniconda.html) or [anaconda](https:
 Then type:
 
 ```bash
-conda install pyosim -c pyomeca
+conda install pyosim -c pyomeca -c conda-forge
 ```
 
 ## Integration with other modules
