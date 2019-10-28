@@ -171,6 +171,9 @@ class Scale:
         marker_placer.setMaxMarkerMovement(-1)
 
         marker_placer.processModel(scaled_model)
+        
+        # save processed model
+        scaled_model.printToXML(self.model_output)
 
         # print scale config to xml
         self.scale_tool.printToXML(self.xml_output)
