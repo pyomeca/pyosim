@@ -3,10 +3,10 @@ from pathlib import Path
 import numpy as np
 import opensim as osim
 
-from pyomeca import Analogs3d
+from pyomeca import Analogs
 
 
-class Analogs3dOsim(Analogs3d):
+class Analogs3dOsim(Analogs):
     def __new__(cls, *args, **kwargs):
         """Convenient wrapper around Analogs3d from the pyomeca library"""
         return super(Analogs3dOsim, cls).__new__(cls, *args, **kwargs)
