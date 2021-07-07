@@ -80,6 +80,7 @@ class AnalyzeTool:
         xml_output,
         sto_output,
         mot_files,
+        forces_file=None,
         xml_forces=None,
         ext_forces_dir=None,
         muscle_forces_dir=None,
@@ -95,6 +96,7 @@ class AnalyzeTool:
         self.xml_output = xml_output
         self.sto_output = sto_output
         self.xml_forces = xml_forces
+        self.forces_file = forces_file
         self.ext_forces_dir = ext_forces_dir
         self.muscle_forces_dir = muscle_forces_dir
         self.xml_actuators = xml_actuators
@@ -177,24 +179,36 @@ class AnalyzeTool:
             elif current_class == "MuscleAnalysis":
                 solve_for_equilibrium = True
                 analysis = osim.MuscleAnalysis(model)
-                analysis.setComputeMoments(params["compute_moments"])
+                coord = osim.ArrayStr()
+                for c in params["moment_arm_coordinate_list"]:
+                    coord.append(c)
+                analysis.setCoordinates(coord)
+
+                mus = osim.ArrayStr()
+                for m in params["muscle_list"]:
+                    mus.append(m)
+                analysis.setMuscles(mus)
+                # analysis.setComputeMoments(params["compute_moments"])
             elif current_class == "JointReaction":
                 # construct joint reaction analysis
                 analysis = osim.JointReaction(model)
-                analysis.setForcesFileName(
-                    f"{Path(self.muscle_forces_dir, trial.stem).resolve()}_StaticOptimization_force.sto"
-                )
+                if params["forces_file"] or self.forces_file:
+                    force_file = self.forces_file if self.forces_file else params["forces_file"]
+                    analysis.setForcesFileName(force_file)
 
                 joint = osim.ArrayStr()
-                joint.append(params["joint_names"].replace(" ", ""))
+                for j in params["joint_names"]:
+                    joint.append(j)
                 analysis.setJointNames(joint)
 
                 body = osim.ArrayStr()
-                body.append(params["apply_on_bodies"].replace(" ", ""))
+                for b in params["apply_on_bodies"]:
+                    body.append(b)
                 analysis.setOnBody(body)
 
                 frame = osim.ArrayStr()
-                frame.append(params["express_in_frame"].replace(" ", ""))
+                for f in params["express_in_frame"]:
+                    frame.append(f)
                 analysis.setInFrame(frame)
             else:
                 raise ValueError("AnalyzeTool must be called from a child class")
@@ -243,8 +257,7 @@ class AnalyzeTool:
             if self.contains:
                 self._subset_output(directory=self.sto_output, contains=self.contains)
 
-    @staticmethod
-    def parse_analyze_set_xml(filename, node):
+    def parse_analyze_set_xml(self, filename, node):
         from xml.etree import ElementTree
 
         tree = ElementTree.parse(filename)
@@ -259,13 +272,31 @@ class AnalyzeTool:
 
         out = {}
         for t in root.findall(f".//{node}/*"):
-            if t.text == "true" or t.text == "false":
-                out.update({t.tag: t.text == "true"})
-            elif isfloat(t.text):
+            if t.text == "true":
+                out.update({t.tag: True})
+            elif t.text == "false":
+                out.update({t.tag: False})
+            elif t.text is None:
+                out.update({t.tag: t.text})
+            elif isfloat(t.text) is True:
                 out.update({t.tag: float(t.text)})
             else:
-                out.update({t.tag: t.text})
+                out.update({t.tag: self._str_to_list(t.text)})
+
+
         return out
+
+    @staticmethod
+    def _str_to_list(string):
+        count = 0
+        car = string[count]
+        while car == " ":
+            count += 1
+            car = string[count]
+
+        string = string[count:]
+        li = list(string.split(" "))
+        return li
 
     @staticmethod
     def _remove_empty_files(directory, threshold=1000):
