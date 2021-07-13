@@ -137,7 +137,7 @@ class AnalyzeTool:
             print(f"\t{trial.stem}")
 
             # model
-            model = osim.Model(self.model_input)
+            model = osim.Model(self.model_input) if isinstance(self.model_input, str) is True else self.model_input
             model.initSystem()
 
             # get starting and ending time
