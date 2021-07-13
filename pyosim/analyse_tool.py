@@ -90,6 +90,7 @@ class AnalyzeTool:
         remove_empty_files=False,
         multi=False,
         contains=None,
+        print_to_xml=False,
     ):
         self.model_input = model_input
         self.xml_input = xml_input
@@ -105,6 +106,7 @@ class AnalyzeTool:
         self.remove_empty_files = remove_empty_files
         self.multi = multi
         self.contains = contains
+        self.print_to_xml = print_to_xml
 
         if not isinstance(mot_files, list):
             self.mot_files = [mot_files]
@@ -221,11 +223,14 @@ class AnalyzeTool:
             analysis.setEndTime(last_time)
             model.addAnalysis(analysis)
 
+            if self.print_to_xml is True:
+                analysis.printToXML(f"{self.xml_output}/{current_class}_analysis.xml")
+
             # analysis tool
             analyze_tool = osim.AnalyzeTool(model)
             analyze_tool.setName(trial.stem)
             analyze_tool.setModel(model)
-            analyze_tool.setModelFilename(Path(self.model_input).stem)
+            analyze_tool.setModelFilename(Path(model.toString()).stem)
             analyze_tool.setSolveForEquilibrium(solve_for_equilibrium)
 
             if self.xml_actuators:
