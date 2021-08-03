@@ -3,10 +3,10 @@ from pathlib import Path
 import numpy as np
 import opensim as osim
 
-from pyomeca import Markers3d
+from pyomeca import Markers
 
 
-class Markers3dOsim(Markers3d):
+class Markers3dOsim(Markers):
     def __new__(cls, *args, **kwargs):
         """Convenient wrapper around Markers3d from the pyomeca library"""
         return super(Markers3dOsim, cls).__new__(cls, *args, **kwargs)
